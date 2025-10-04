@@ -348,7 +348,7 @@ const pickImage = async () => {
           <Ionicons name="menu" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
-      IP='192.168.1.155'
+      {/* IP='192.168.1.155' */}
 
       {/* Profile Card */}
       <View style={styles.profileCard}>
@@ -359,7 +359,7 @@ const pickImage = async () => {
         
         <AntDesign onPress={()=>{
           pickImage()
-        }} style={{position:'absolute',top:hp(10),right:wp(35)}} name="camera" size={34} color="black" />
+        }} style={{position:'absolute',top:hp(10),right:wp(35),backgroundColor:'white',borderRadius:20}} name="camera" size={34} color="black" />
         {/* <input type="file" name="file" id="file" /> */}
         <Text style={styles.userName}>{userdata.FirstName+" "+userdata.LastName}</Text>
         <Text style={styles.userEmail}>{userdata.email}</Text>
@@ -404,13 +404,13 @@ const pickImage = async () => {
               <AntDesign name="download" size={24} color="black" />
               <Text style={styles.menuText}>{t('downloadsong')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>{
+            {/* <TouchableOpacity onPress={()=>{
               navigation.navigate('FavraitSong')
 
             }} style={styles.menuItem}>
               <AntDesign name="heart" size={24} color="red" />
               <Text style={styles.menuText}>{t('Favourite')}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity onPress={()=>{
       navigation.navigate('ProfileUpdate')
 
@@ -457,36 +457,42 @@ const styles = StyleSheet.create({
   profileCard: {
     alignItems: "center",
     marginVertical: 20,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth:1,
+
     marginHorizontal: 16,
     padding: 20,
     borderRadius: 16,
-    elevation: 4,
+    // elevation: 4,
   },
   userImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginBottom: 12,
-    borderWidth: 3,
+    padding:5,
+    borderWidth: 5,
     borderColor: "#2196f3",
   },
-  userName: { fontSize: 22, fontWeight: "bold", color: "#333" },
-  userEmail: { fontSize: 16, color: "#666", marginTop: 4 },
-  userPhone: { fontSize: 16, color: "#666", marginTop: 2 },
+  userName: { fontSize: 22, fontWeight: "bold", color: "#000" },
+  userEmail: { fontSize: 16, color: "#000", marginTop: 4 },
+  userPhone: { fontSize: 16, color: "#000", marginTop: 2 },
 
   // Info boxes
   infoBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth:1,
     padding: 14,
     marginHorizontal: 16,
     marginBottom: 10,
+    color:'black',
     borderRadius: 12,
-    elevation: 2,
+    // elevation: 2,
   },
-  infoText: { fontSize: 16, marginLeft: 8, color: "#444" },
+  infoText: { fontSize: 16, marginLeft: 8, color: "#000" },
 
   // Menu modal
   overlay: {

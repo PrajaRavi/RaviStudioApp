@@ -22,7 +22,7 @@ import { AppContext } from '../Store';
 let {width,height}=Dimensions.get('window')
 // import { useTranslation } from 'react-i18next';
 import { useTranslation } from "react-i18next";
-import { hp } from "../helper";
+import { hp, wp } from "../helper";
 import RiverBackground from '../theme/RiverTheme';
 import { isUserOnline } from "../utils/Internate";
 let firstrender=true
@@ -64,21 +64,22 @@ const styles = StyleSheet.create({
     color: 'black',
     marginLeft: 15,
     marginBottom: 10,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
+    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    // textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 5,
   },
   horizontalScrollView: {
     paddingHorizontal: 10,
+
   },
   singerItem: {
     alignItems: 'center',
-    marginHorizontal: 25,
-    width: width * 0.25,
+    marginHorizontal: -10,
+    // width: width * 0.25,
   },
   singerImage: {
-    width: 120,
-    height: 120,
+    // width: 120,
+    // height: 120,
     borderRadius: 100,
     borderWidth: 3,
     borderColor: '#000',
@@ -87,13 +88,13 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 5,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: wp(3),
     fontWeight: 'bold',
   },
   playlistItem: {
     alignItems: 'center',
-    marginHorizontal: 0,
-    width: width * 0.4,
+    marginHorizontal: -10,
+    // width: width * 0.4,
   },
   playlistImage: {
     width: width * 0.35,
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: wp(3),
   },
   footer: {
     alignItems: 'center',
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: '#000',
-    fontSize: 15,
+    fontSize: wp(3),
     fontWeight: '500',
     marginBottom: 3,
   },
@@ -276,13 +277,13 @@ const speak = () => {
     // alert('called')
     // console.log("chala")
  let email= JSON.parse(SecureStore.getItem('user')).email;
- console.log(email)
+//  console.log(email)
  if(email){
 // alert(email)
 axios.defaults.withCredentials=true;
    let {data}=await axios.get(`http://${IP}:4500/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
   //  console.log(data)
-   console.log("data hai")
+  //  console.log("data hai")
   
    setisLogin(true)
    setuserdata(data)
@@ -398,7 +399,7 @@ let data=await SecureStore.deleteItemAsync('Token');
     let myinterval=setInterval(()=>{
 
       IsUserOnline();
-    },3000)
+    },1000)
     setTimeout(()=>{
       i18n.changeLanguage("hi")
       // alert("hello")
@@ -484,9 +485,9 @@ setIsSeletedLang(code)
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
                {singerdata.map((singer,index) => (
                 <TouchableOpacity key={index} style={styles.singerItem}>
-                {/* <Image source={{ uri: `http://${IP}:4500/${singer.singerimage}` }} style={styles.singerImage} /> */}
-                   <DropImage key={index} size={180} src={`http://${IP}:4500/${singer.singerimage}`}/>
-                   {/* <Text style={styles.singerName}>{singer.name}</Text> */}
+
+                   <DropImage key={index} size={120} src={`http://${IP}:4500/${singer.singerimage}`}/>
+                   <Text style={styles.singerName}>{singer.name}</Text>
                  </TouchableOpacity>
               ))}
             </ScrollView>
@@ -501,7 +502,7 @@ setIsSeletedLang(code)
                   HandleSongPageShift(playlist.name)
                 }} key={index} style={styles.playlistItem}>
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
-                <DropImage key={index} size={180}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
+                <DropImage key={index} size={120}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
 
                   <Text style={styles.playlistName}>{playlist.name}</Text>
                 </TouchableOpacity>

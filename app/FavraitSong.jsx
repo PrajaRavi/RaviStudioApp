@@ -36,7 +36,8 @@ export default function FavraitSong() {
       // console.log(Data.data)
       if (Data) {
         console.log(Data.data)
-        setLikedSongData(Data.data);
+        // setLikedSongData(Data.data);
+        setBhojsongdata(Data.data)
      
         
       } else {
@@ -182,7 +183,7 @@ CollectLikedSongData()
       <Text style={{fontSize:28,fontWeight:'bold',color:globalcolor}}>{t('Favourite')}</Text>
         </View>
       <View style={{width,height:height*0.8,paddingHorizontal:10,marginTop:20}}>
-      { !LikedSongData==''?<FlatList  data={LikedSongData} showsVerticalScrollIndicator={false} renderItem={({item,index})=>(
+      { !LikedSongData==''?<FlatList  data={Bhojsongdata} showsVerticalScrollIndicator={false} renderItem={({item,index})=>(
       
       
       

@@ -9,7 +9,7 @@ import pauseicon from "../assets/pause.png"
 import crossicon from "../assets/cancel.png"
 import threedotoption from "../assets/three-dots.png"
 let   IP='192.168.1.156';
-
+import { RotatingImage } from './utils/RotateImage'
 
 import Entypo from '@expo/vector-icons/Entypo'
 import Slider from '@react-native-community/slider'
@@ -23,8 +23,7 @@ import axios from 'axios'
 import { useContext } from 'react'
 import { wp,hp } from './helper'
 import { AppContext } from './Store'
-import { RotateInDownLeft } from 'react-native-reanimated'
-
+import { CircularRainbowVisualizer } from './MusicVisualizer'
 
 
 export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,songurl,setsongurl,UserPlaylistData,userdata
@@ -34,6 +33,7 @@ const spinvalue=useRef(new Animated.Value(0)).current;
 const {t}=useTranslation()
      const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,Artist,IsCurr,setIsCurr,ravi}=useContext(AppContext)
      let Data=useContext(AppContext)
+     let [showadd,setshowadd]=useState(false)
     let [IsActive,setIsActive]=useState(false)
     let [oneloop,setoneloop]=useState(false)
     let [loop,setloop]=useState(false)
@@ -90,6 +90,9 @@ async function Handlenext(){
     let Data1=await SecureStore.getItemAsync('SongData')
     let SongData=JSON.parse(Data1)
   //  console.log(Data1)
+  console.log(SongData)
+  console.log("songdataravi")
+  alert(SongData.name)
     let {idx,TotalSong}=SongData
     try {
     
@@ -767,7 +770,7 @@ setOptions(false)
     <>
     <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
 
-     <View style={{position:'absolute',bottom:20,zIndex:30}}  >
+     <View style={{position:'absolute',bottom:50,zIndex:30}}  >
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
@@ -781,9 +784,11 @@ setOptions(false)
   CheckSongIsFavrait(para)
 }} className=' ' ref={Data.songname1}   style={{width:width*0.5,color:'white'}}>{Data.para!=undefined?Data.para.length>40?((Data.para).slice(0,40)+'...'):Data.para:null}</Text>
 {/* <Text > {para.length>40?(para.slice(0,40)+'...'):para}</Text> */}
-<Image  source={Data.ImageUrl} style={{width:50,height:50,borderRadius:100,borderColor:'#3fa9f5',padding:5,borderWidth:3}} className='w-[50px] hover:scale-50 right-image  h-[50px]     border-2  rounded-full' />
+{/* <Image  source={Data.ImageUrl} style={{width:50,height:50,borderRadius:100,borderColor:'#3fa9f5',padding:5,borderWidth:3}} className='w-[50px] hover:scale-50 right-image  h-[50px]     border-2  rounded-full' /> */}
+<RotatingImage imageSource={Data.ImageUrl} size={50} isPlaying={IsPlay} duration={5000} soundObject={sound} />
 </View>
 </View>
+
 {IsActive?<View style={{backgroundColor:'black',zIndex:50,position:'absolute',bottom:0,padding:5,borderRadius:15,height:hp(70),display:'flex',flexDirection:'column',gap:20,paddingTop:20}} >
 <View className='header flex w-[100%] justify-between flex-row '>
 {/* <Entypo name="cross" onPress={HandleCross} size={40} color="#3fa9f5" /> */}
@@ -823,9 +828,15 @@ return <TouchableOpacity onPress={()=>{
 </TouchableOpacity>
 </View>:null}
 </View>
+<View style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
 
-<Image source={Data.ImageUrl} style={{borderColor:'#3fa9f5',borderWidth:5}} className='border-2 z-20 rounded-full relative  w-[80%] h-[300px] mx-auto'>
-</Image>
+{showadd==false?<CircularRainbowVisualizer image={ImageUrl} soundObject={sound} />:
+<View>
+  <Text style={{color:"white",fontSize:40,borderWidth:3,borderColor:'red',width:wp(90),height:hp(40)}}>show ads</Text>
+  </View>}
+</View>
+{/* <Image source={Data.ImageUrl} style={{borderColor:'#3fa9f5',borderWidth:5}} className='border-2 z-20 rounded-full relative  w-[80%] h-[300px] mx-auto'>
+</Image> */}
 <View className='w-[90%] mx-auto flex items-center justify-center flex-col'>
 
 <Text className='text-white'>{Data.Artist!=undefined?Data.Artist.length>40?((Data.Artist).slice(0,40)+'...'):Data.Artist:null}</Text>

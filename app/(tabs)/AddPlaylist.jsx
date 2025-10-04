@@ -1,5 +1,9 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import axios from 'axios';
+import React from "react";
+import {  StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
+// import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SecureStore from 'expo-secure-store';
@@ -8,16 +12,20 @@ import { useTranslation } from 'react-i18next';
 import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { AppContext } from '../Store';
+import {hp, wp} from "../helper"
+import { Image } from 'expo-image';
+import { useNavigation } from 'expo-router';
 const {width,height}=Dimensions.get('window');
 let   IP='192.168.1.155';;
 export default function AddPlaylist() {
-  const {IsLogin,setisLogin}=useContext(AppContext)
+  const {IsLogin,setisLogin,para,ImageUrl,Artist}=useContext(AppContext)
   let [name,setname]=useState()
   
 let [userdata,setuserdata]=useState()
 let [globalcolor,setglobalcolor]=useState('black')
 let [UserPlaylistData,setuserplaylistdata]=useState([])
 const {t}=useTranslation()
+ const navigation=useNavigation();
  
   // formdata.append('title',title)
   // formdata.append('description',description)
@@ -103,6 +111,7 @@ console.log(data)
       }
 
       useEffect(()=>{
+        alert(ImageUrl)
 GetUserData()
       },[])
   return (
@@ -114,29 +123,113 @@ GetUserData()
 
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{flex:1}}
+      style={{flex:1,display:'flex',alignItems:'start',justifyContent:'start'}}
     >
+ <View style={styles.container}>
+      {/* Glassmorphic Card 1 */}
+      <TouchableOpacity onPress={()=>{
+              navigation.navigate('FavraitSong')
 
-    <View  style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,width:'100%',height:height}}>
-       
-    <Text className='font-bold ' style={{fontSize:50,marginBottom:10,textAlign:'center',color:globalcolor}}>{t('addyourplaylist')}</Text>
-    <TextInput placeholder={t('playlistname')} placeholderTextColor={globalcolor}   onChangeText={(text)=>setname(text)} value={name}    
-          style={{fontWeight:'bold',fontSize:15,color:globalcolor,borderRadius:23,borderColor:globalcolor,width:width*0.8,borderWidth:2,paddingHorizontal:20}}/>
-    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:globalcolor,borderWidth:2,width:width*0.8,borderRadius:23,paddingHorizontal:5}}  className="font-bold text-xl flex flex-row items-center justify-center gap-4 rounded-md border-2 my-3 border-white w-[80%]">
-      
+            }}   style={[styles.card,{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}]}>
+          <Text style={styles.icon}>❤️</Text>
+          {/* <Text style={styles.text}>Liked Songs</Text> */}
+          <Text style={styles.menuText}>{t('Favourite')}</Text>
+          
+      </TouchableOpacity>
 
-      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:10}}>{t('choosefile')}</Text>
-      <AntDesign name="upload" size={24} color={globalcolor} />
-    
-    </TouchableOpacity>
-    {/* <Button title='Playlist Image' onPress={pickImage}/> */}
-    {/* <TouchableOpacity onPress={SendData} >
-               <Text className='text-2xl font-bold border-2 px-5 rounded-md'>Submit</Text>
-             </TouchableOpacity> */}
+      {/* Glassmorphic Card 2 */}
+      <TouchableOpacity activeOpacity={0.3}  style={styles.card}>
+          <TouchableOpacity style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}}>
+
+          <Text style={styles.icon}>🎵</Text>
+          <Text style={styles.text}>Last Played</Text>
+          
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.card1}>
+                <TouchableOpacity >
+                  <Image source={ ImageUrl } style={styles.cover} />
+                </TouchableOpacity>
+
+                <View style={styles.info}>
+                  <Text style={styles.title}>{String(para).length>25?(para).slice(0,25)+"..":para}</Text>
+                  <Text style={styles.Artist}>{Artist}</Text>
+                </View>
+
+              </TouchableOpacity>
+           
+          </TouchableOpacity>
+
+      {/* Glassmorphic Card 3 */}
+      <TouchableOpacity onPress={()=>{
+        navigation.navigate("PlaylistAdd")
+      }} activeOpacity={0.3} style={[styles.card,{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}]}>
+          <Text style={styles.icon}>➕</Text>
+          <Text style={styles.text}>Add Your Playlist</Text>
+      </TouchableOpacity>
     </View>
-    </LinearGradient>
+    {/* a view for showing ads */}
+    <View style={{borderWidth:3,height:hp(45)}}>
+      <Text>Showing adds</Text>
+
+    </View>
+       </LinearGradient>
     </AlertNotificationRoot>
       
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "colum",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    marginTop: 20,
+    paddingVertical:40,
+    gap:20,
+  },
+  card: {
+    width:wp(90) ,
+    paddingVertical:10,
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth:1,
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+    flexDirection:'column'
+
+
+  },
+  blur: {
+    paddingVertical: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+  icon: {
+    fontSize: 20,
+    marginBottom: 6,
+  },
+  text: {
+    color: "#000",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+    card1: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap:15,
+    padding: 10,
+    width:wp(84),
+    marginBottom: 12,
+    backgroundColor: "#f4f4f4",
+    borderRadius: 8,
+  },
+  cover: { width: 60, height: 60, borderRadius: 6 },
+
+});

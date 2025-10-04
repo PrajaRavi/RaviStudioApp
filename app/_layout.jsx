@@ -182,7 +182,7 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name='FogotEmail' options={{headerShown:false}} />
    <Stack.Screen name='ResetPas' options={{headerShown:false}} />
    <Stack.Screen name='Login' options={{headerShown:false}} />
-  
+  <Stack.Screen name="PlaylistAdd" options={{headerShown:false}}/>
    <Stack.Screen name='(tabs)' options={{headerShown:false}} />
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />
    <Stack.Screen name='Contact' options={{headerShown:false}} />
