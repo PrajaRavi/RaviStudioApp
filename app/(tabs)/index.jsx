@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#000',
   },
+  
   singerName: {
     color: '#000',
     marginTop: 5,
@@ -133,15 +134,17 @@ export default function Index() {
   // const {t,i18n}=useTranslation()
   const {t,i18n}=useTranslation()
   const {top,bottom}=useSafeAreaInsets();
-  const paddingtop=top>0?10:top;
-  const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP}=useContext(AppContext)
+  const paddingtop=top>0?30:top;
+  const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP,IconSize,setIconSize}=useContext(AppContext)
   const navigation=useNavigation()
   let [singerdata,setsingerdata]=useState([])
 let [playlistdata,setplaylistdata]=useState([])
 // let [userdata,setuserdata]=useState([])
+
 let [light,setlight]=useState(true)
 let [IsModal,setIsModal]=useState(false)
 let [globalcolor,setglobalcolor]=useState('white');
+let [Iconsize1,setIconSize1]=useState(IconSize)
 let [searchplaylistdata,setsearchplaylistdata]=useState([])
 // let [UserPlaylistData,setuserplaylistdata]=useState()
 let [langcode,setlangcode]=useState()
@@ -446,6 +449,10 @@ setIsSeletedLang(code)
   }
 
   }
+  useEffect(()=>{   
+// alert(IconSize+"size")
+    setIconSize1(IconSize)
+  },[IconSize])
 
   return (
     <>
@@ -486,8 +493,9 @@ setIsSeletedLang(code)
                {singerdata.map((singer,index) => (
                 <TouchableOpacity key={index} style={styles.singerItem}>
 
-                   <DropImage key={index} size={120} src={`http://${IP}:4500/${singer.singerimage}`}/>
-                   <Text style={styles.singerName}>{singer.name}</Text>
+                   <DropImage key={index} size={Iconsize1} src={`http://${IP}:4500/${singer.singerimage}`}/>
+                   
+                   <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{singer.name}</Text>
                  </TouchableOpacity>
               ))}
             </ScrollView>
@@ -502,9 +510,9 @@ setIsSeletedLang(code)
                   HandleSongPageShift(playlist.name)
                 }} key={index} style={styles.playlistItem}>
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
-                <DropImage key={index} size={120}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
+                <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
 
-                  <Text style={styles.playlistName}>{playlist.name}</Text>
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -513,8 +521,8 @@ setIsSeletedLang(code)
 
 {/* Footer Section */}
            <View style={styles.footer}>
-             <Text style={styles.footerText}>© 2024 Music Hub. All rights reserved.</Text>
-             <Text style={styles.footerText}>Made with ❤️</Text>
+             <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>© 2024 Music Hub. All rights reserved.</Text>
+             <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>Made with ❤️</Text>
            </View>
 </View>
 

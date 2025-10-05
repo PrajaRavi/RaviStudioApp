@@ -31,6 +31,9 @@ let [IsCurr,setIsCurr]=useState()
       
       const [sound,setsound]=useState()
       let [IsLogin,setisLogin]=useState(false)
+    let [oneloop,setoneloop]=useState(false)
+    // let [IsDownloadPage,setIsDownloadpage]=useState(false)
+    let [IconSize,setIconSize]=useState(120)
       const [status,setstatus]=useState()
       let [Minute,setMinute]=useState()
       let [songurl,setsongurl]=useState([])
@@ -155,7 +158,14 @@ setTimeout(()=>{
       setisLogin(false)
     }
   }
+  async function GetIconSizeFromPhone(){
+    let size=await SecureStore.getItemAsync('iconSize')
+    if(size){
+      setIconSize(parseInt(size))
+    } 
+  }
 useEffect(()=>{
+GetIconSizeFromPhone();
 IsUserOnline();
 },[])
   
@@ -169,10 +179,10 @@ CheackIfTokenExistOrNot()
     <>
 {/* <StatusBar hidden={true} /> */}
 
-    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP}} >
+    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
-   {userdata.FirstName||internate==false?<MusicPlayer position={'fixed'} bottom={'100px' }  positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
+   {(userdata.FirstName||internate==false) ?<MusicPlayer  position={'fixed'} bottom={'100px' }  positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
   
   
    
@@ -180,8 +190,10 @@ CheackIfTokenExistOrNot()
 
    <Stack.Screen name='index' options={{headerShown:false}} />
    <Stack.Screen name='FogotEmail' options={{headerShown:false}} />
+   <Stack.Screen name="DownloadScreen" options={{headerShown:false}}/>
    <Stack.Screen name='ResetPas' options={{headerShown:false}} />
    <Stack.Screen name='Login' options={{headerShown:false}} />
+   <Stack.Screen name='setting' options={{headerShown:false}}/>
   <Stack.Screen name="PlaylistAdd" options={{headerShown:false}}/>
    <Stack.Screen name='(tabs)' options={{headerShown:false}} />
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />

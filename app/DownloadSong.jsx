@@ -1,24 +1,23 @@
-import { Entypo } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from 'expo-router';
-import { useEffect } from 'react';
-import lefticon from "../assets/left.png"
+import { useContext, useEffect } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { AlertNotificationRoot } from 'react-native-alert-notification';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DownloadScreen } from "./screen/DownloadScreen";
-import { Image } from 'expo-image';
+import lefticon from "../assets/left.png";
+import { DownloadScreen } from "./DownloadScreen";
+import { AppContext } from './Store';
+import { hp } from './helper';
 const {width,height}=Dimensions.get('window')
 // let   IP='192.168.1.156';
 let   IP='192.168.1.156';
 
 export default function DownloadedSong() {
+  // const {setIsDownloadpage,IsDownloadPage}=useContext(AppContext)
   const navigaion=useNavigation()
   const {top}=useSafeAreaInsets();
   const paddingtop=top>0?30:top;
-  useEffect(()=>{
-    // alert("mai chala")
-  },[])
   return (
     <>
     <AlertNotificationRoot>
@@ -43,7 +42,7 @@ export default function DownloadedSong() {
       </TouchableOpacity>
       <Text style={{fontSize:28,fontWeight:'bold'}}>Downloaded Song</Text>
         </View>
-      <View style={{width,height:height*0.8,paddingHorizontal:10,marginTop:20}}>
+      <View style={{width,height:hp(90),paddingHorizontal:10,marginTop:20}}>
         <DownloadScreen/>
       </View>
 

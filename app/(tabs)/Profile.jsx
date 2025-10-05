@@ -229,6 +229,7 @@
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
+import settingicon from "../../assets/gear.png"
 import axios from 'axios';
 import { useContext, useEffect, useState } from "react";
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
@@ -238,6 +239,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+
 import { useTranslation } from "react-i18next";
 import {
   Image,
@@ -404,13 +406,14 @@ const pickImage = async () => {
               <AntDesign name="download" size={24} color="black" />
               <Text style={styles.menuText}>{t('downloadsong')}</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity onPress={()=>{
-              navigation.navigate('FavraitSong')
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('setting')
 
             }} style={styles.menuItem}>
-              <AntDesign name="heart" size={24} color="red" />
-              <Text style={styles.menuText}>{t('Favourite')}</Text>
-            </TouchableOpacity> */}
+              {/* <AntDesign name="heart" size={24} color="red" /> */}
+              <Image source={settingicon} style={{width:35,height:35}}/>
+              <Text style={styles.menuText}>{t('settings')}</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={()=>{
       navigation.navigate('ProfileUpdate')
 

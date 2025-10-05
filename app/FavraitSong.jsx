@@ -23,7 +23,7 @@ export default function FavraitSong() {
     const paddingtop=top>0?30:top;
     
   let [FilteredLikedSongData,setFilteredLikedSongData]=useState([])
-   const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,userdata}=useContext(AppContext)
+   const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,userdata,IsCurr,setIsCurr}=useContext(AppContext)
    const {t}=useTranslation()
   async function CollectLikedSongData() {
   
@@ -52,6 +52,8 @@ export default function FavraitSong() {
 
   }
   async function playSound(name,cover,idx,artist) {
+    // alert(IsCurr+'iscurr')
+    setIsCurr(name)
      setArtist(artist)
      let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
      try {
@@ -189,7 +191,7 @@ CollectLikedSongData()
       
       <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
         playSound(item.name,item.cover,index,item.artist)
-      }} className="border-2 border-white w-[100%] my-1   rounded-md  items-center justify-between flex-row">
+      }} className={IsCurr==item.name?"border-2 border-black w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
       <Image className="border-2 border-black rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
 
       </Image>

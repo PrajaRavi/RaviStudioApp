@@ -63,7 +63,7 @@ export default function ShowSong() {
     let Data = await axios.get(
       `http://${IP}:4500/GetBhojpuriSong/${playlistname}`
     );
-   
+   console.log(Data.data)
     setBhojsongdata(Data.data);
    
     
@@ -249,7 +249,7 @@ navigation.goBack()
    
    <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
      playSound(item.songname,item.covername,index,item.artist)
-   }}  className={IsCurr!=item.songname?"border-2 border-white w-[100%] my-1   rounded-md  items-center justify-between flex-row px-1 py-1":"border-2 border-[#000] w-[100%] my-1 px-1 py-1    rounded-md  items-center  justify-between flex-row"}>
+   }}  className={IsCurr!=item.songname?"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row px-1 py-1":"border-2 border-[#000] w-[100%] my-1 px-1 py-1    rounded-md  items-center  justify-between flex-row"}>
    <Image style={{width:40,height:40,borderRadius:12}} source={{uri:`http://${IP}:4500/${item.covername}`}}>
 
    </Image>
