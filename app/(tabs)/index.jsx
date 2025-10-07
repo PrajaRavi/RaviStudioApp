@@ -134,7 +134,7 @@ export default function Index() {
   // const {t,i18n}=useTranslation()
   const {t,i18n}=useTranslation()
   const {top,bottom}=useSafeAreaInsets();
-  const paddingtop=top>0?30:top;
+  const paddingtop=top>0?10:top;
   const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP,IconSize,setIconSize}=useContext(AppContext)
   const navigation=useNavigation()
   let [singerdata,setsingerdata]=useState([])

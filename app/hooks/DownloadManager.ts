@@ -5,44 +5,37 @@ import { File, Directory, Paths } from "expo-file-system";
 
 export type DownloadedSong = {
   id: string;
-  title: string;
+  songname: string;   // song name
   artist: string;
   duration: number | null;
-  uri: string;       // local song file URI
-  artwork: string;   // local cover file URI
+  uri: string;        // local song file URI
+  cover: string;      // local cover file URI
 };
 
 const METADATA_KEY = "DOWNLOADED_SONGS_METADATA";
 
-// Directory instances (use constructor, not fromPath)
+// Directories
 const SONGS_DIR = new Directory(Paths.document, "songs3");
 const COVERS_DIR = new Directory(Paths.document, "covers1");
 
 export function useDownloadManager() {
   const [downloads, setDownloads] = useState<DownloadedSong[]>([]);
 
-  // Ensure directories exist (create() throws if already exists — safe in try/catch)
   const ensureDirs = async () => {
     try {
       SONGS_DIR.create();
-    } catch (e) {
-      // already exists or cannot create — ignore here
-    }
+    } catch {}
     try {
       COVERS_DIR.create();
-    } catch (e) {
-      // already exists or cannot create — ignore here
-    }
+    } catch {}
   };
 
-  // Load all downloads on mount
   useEffect(() => {
     (async () => {
       await loadAllDownloads();
     })();
   }, []);
 
-  // Read metadata helper
   const readMetadata = async (): Promise<Record<string, any>> => {
     const metadataJson = await AsyncStorage.getItem(METADATA_KEY);
     return metadataJson ? JSON.parse(metadataJson) : {};
@@ -52,30 +45,28 @@ export function useDownloadManager() {
     await AsyncStorage.setItem(METADATA_KEY, JSON.stringify(metadata));
   };
 
-  // Load songs from songs directory (Directory.list() returns File | Directory[])
   const loadAllDownloads = async (): Promise<DownloadedSong[]> => {
     await ensureDirs();
 
     try {
       const metadata = await readMetadata();
-      const items = SONGS_DIR.list(); // returns (File | Directory)[] per docs
+      const items = SONGS_DIR.list();
       const loaded: DownloadedSong[] = [];
 
       for (const item of items) {
-        // only process files
         if (item instanceof File) {
-          const filename = item.name; // includes extension
+          const filename = item.name;
           const id = filename.replace(/\.[^/.]+$/, "");
-          const cover = new File(COVERS_DIR, id + ".jpg");
-
+          const coverFile = new File(COVERS_DIR, id + ".jpg");
           const meta = metadata[id] || {};
+
           loaded.push({
             id,
-            title: meta.title || id,
+            songname: meta.songname || id,
             artist: meta.artist || "Unknown Artist",
             duration: meta.duration ?? null,
             uri: item.uri,
-            artwork: cover.uri,
+            cover: coverFile.uri,
           });
         }
       }
@@ -89,12 +80,11 @@ export function useDownloadManager() {
     }
   };
 
-  // Download a song + cover + update metadata
   const downloadSong = async (
     id: string,
     songUrl: string,
     coverUrl: string,
-    title: string,
+    songname: string,
     artist: string
   ): Promise<string | null> => {
     await ensureDirs();
@@ -102,46 +92,42 @@ export function useDownloadManager() {
     const songFile = new File(SONGS_DIR, id + ".mp3");
     const coverFile = new File(COVERS_DIR, id + ".jpg");
 
-    // Check existing
+    // Check if already exists
     try {
-      const info = songFile.info(); // info() returns FileInfo (awaiting a non-promise is safe)
+      const info = songFile.info();
       if (info && info.exists) {
-        // ensure state + metadata are consistent
         const metadata = await readMetadata();
         const meta = metadata[id] || {};
         const existing: DownloadedSong = {
           id,
-          title: meta.title || title,
+          songname: meta.songname || songname,
           artist: meta.artist || artist,
           duration: meta.duration ?? null,
           uri: songFile.uri,
-          artwork: coverFile.uri,
+          cover: coverFile.uri,
         };
         setDownloads((prev) => (prev.some((s) => s.id === id) ? prev : [...prev, existing]));
         return songFile.uri;
       }
-    } catch (e) {
-      // info() might throw on some platforms for inaccessible paths — ignore and continue to download
-    }
+    } catch {}
 
-    // Download song into exact filename
+    // Download song file
     let downloadedSongFile: any;
     try {
       downloadedSongFile = await File.downloadFileAsync(songUrl, songFile);
-      // downloadedSongFile is a File instance (or will throw on non-2xx)
     } catch (err) {
       console.error("Failed to download song:", err);
       throw err;
     }
 
-    // Try download cover (non-fatal)
+    // Download cover file
     try {
       await File.downloadFileAsync(coverUrl, coverFile);
     } catch (e) {
       console.warn("Failed to download cover for:", id, e);
     }
 
-    // Get duration using expo-av (unload sound in finally)
+    // Get duration
     let duration: number | null = null;
     let sound;
     try {
@@ -159,25 +145,25 @@ export function useDownloadManager() {
       } catch {}
     }
 
-    // Update metadata + state
+    // Save metadata
     const metadata = await readMetadata();
-    metadata[id] = { title, artist, duration };
+    metadata[id] = { songname, artist, duration };
     await saveMetadata(metadata);
 
+    // Push into downloads list
     const newSong: DownloadedSong = {
       id,
-      title,
+      songname,
       artist,
       duration,
       uri: downloadedSongFile.uri,
-      artwork: coverFile.uri,
+      cover: coverFile.uri,
     };
 
     setDownloads((prev) => [...prev, newSong]);
     return downloadedSongFile.uri;
   };
 
-  // Delete song + cover + metadata
   const deleteSong = async (id: string) => {
     try {
       const songFile = new File(SONGS_DIR, id + ".mp3");
@@ -185,14 +171,10 @@ export function useDownloadManager() {
 
       try {
         songFile.delete();
-      } catch (e) {
-        // ignore if doesn't exist
-      }
+      } catch {}
       try {
         coverFile.delete();
-      } catch (e) {
-        // ignore if doesn't exist
-      }
+      } catch {}
 
       const metadata = await readMetadata();
       if (metadata[id]) {

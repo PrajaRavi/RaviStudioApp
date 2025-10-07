@@ -252,13 +252,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hp, wp } from "../helper";
 import { AppContext } from "../Store";
+import { ImageBackground } from 'expo-image';
 let IP='192.168.1.156';;
 
 export default function Profile() {
 
   const {t,i18n}=useTranslation();
   const [menuVisible, setMenuVisible] = useState(false);
-  const {IsLogin,setisLogin,sound,userdata,setuserdata}=useContext(AppContext)
+  const {IsLogin,setisLogin,sound,userdata,setuserdata,BackgroundImage,setBackgroundImage}=useContext(AppContext)
 const [userdp,setuserdp]=useState(userdata.Profile)
 const {top}=useSafeAreaInsets();
 const paddingtop=top>0?15:top;
@@ -333,7 +334,7 @@ const pickImage = async () => {
   })
   return (
     <AlertNotificationRoot>
-  <LinearGradient
+  {BackgroundImage==""?<LinearGradient
         // colors={['white', '#1D8DA3']}
           colors={['white', '#3fa9f5','white','#3fa9f5']}
 
@@ -347,7 +348,7 @@ const pickImage = async () => {
       <View style={styles.navbar}>
         <Text style={styles.navTitle}>Profile</Text>
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="menu" size={28} color="#fff" />
+          <Ionicons name="menu" size={28} color="#000" />
         </TouchableOpacity>
       </View>
       {/* IP='192.168.1.155' */}
@@ -361,7 +362,7 @@ const pickImage = async () => {
         
         <AntDesign onPress={()=>{
           pickImage()
-        }} style={{position:'absolute',top:hp(10),right:wp(35),backgroundColor:'white',borderRadius:20}} name="camera" size={34} color="black" />
+        }} style={{position:'absolute',top:hp(10),right:wp(35)}} name="camera" size={34} color="black" />
         {/* <input type="file" name="file" id="file" /> */}
         <Text style={styles.userName}>{userdata.FirstName+" "+userdata.LastName}</Text>
         <Text style={styles.userEmail}>{userdata.email}</Text>
@@ -433,7 +434,100 @@ const pickImage = async () => {
         </TouchableOpacity>
       </Modal>
     </View>
-    </LinearGradient>
+    </LinearGradient>:<ImageBackground source={{ uri: BackgroundImage }} style={{ flex: 1 }} >
+ <View style={[styles.container,{paddingTop:paddingtop+30}]}>
+      {/* Navbar */}
+      <View style={styles.navbar}>
+        <Text style={styles.navTitle}>Profile</Text>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Ionicons name="menu" size={28} color="#000" />
+        </TouchableOpacity>
+      </View>
+      {/* IP='192.168.1.155' */}
+
+      {/* Profile Card */}
+      <View style={styles.profileCard}>
+        <Image
+          source={String(userdp).includes("file:///")?{ uri:userdp }:{uri:`http://${IP}:4500/${userdata.Profile}`}}
+          style={styles.userImage}
+        />
+        
+        <AntDesign onPress={()=>{
+          pickImage()
+        }} style={{position:'absolute',top:hp(10),right:wp(35)}} name="camera" size={34} color="black" />
+        {/* <input type="file" name="file" id="file" /> */}
+        <Text style={styles.userName}>{userdata.FirstName+" "+userdata.LastName}</Text>
+        <Text style={styles.userEmail}>{userdata.email}</Text>
+        <Text style={styles.userPhone}>+91 {userdata.contact}</Text>
+      </View>
+
+      {/* Info Section */}
+      <View style={styles.infoBox}>
+        <Ionicons name="location-outline" size={20} color="#2196f3" />
+        <Text style={styles.infoText}>Mumbai, India</Text>
+      </View>
+      <View style={styles.infoBox}>
+        <Ionicons name="calendar-outline" size={20} color="#2196f3" />
+        <Text style={styles.infoText}>Joined: Jan 2025</Text>
+      </View>
+
+      {/* Menu Modal */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPressOut={() => setMenuVisible(false)}
+        >
+          <View style={styles.menuContainer}>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('Contact')
+
+            }} style={styles.menuItem}>
+              <Feather name="phone" size={24} color="black" />
+              <Text style={styles.menuText}>{t('contact')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('DownloadSong')
+
+
+            }} style={styles.menuItem}>
+              <AntDesign name="download" size={24} color="black" />
+              <Text style={styles.menuText}>{t('downloadsong')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('setting')
+
+            }} style={styles.menuItem}>
+              {/* <AntDesign name="heart" size={24} color="red" /> */}
+              <Image source={settingicon} style={{width:35,height:35}}/>
+              <Text style={styles.menuText}>{t('settings')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+      navigation.navigate('ProfileUpdate')
+
+            }} style={styles.menuItem}>
+              <Ionicons name="person-outline" size={22} color="#2196f3" />
+              <Text style={styles.menuText}>{t("updateprofile")}</Text>
+            </TouchableOpacity> 
+            <TouchableOpacity onPress={()=>{
+              HandleSignOut()
+            }} style={styles.menuItem}>
+              <Ionicons name="log-out-outline" size={22} color="#f44336" />
+              <Text style={[styles.menuText, { color: "#f44336" }]}>
+                {t("log")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
+   
+      </ImageBackground>}
     </AlertNotificationRoot>
 
   );
@@ -447,14 +541,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#2196f3",
+    // backgroundColor: "#2196f3",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth:1,
+    borderRadius:12,
     paddingVertical: 14,
     paddingHorizontal: 16,
     width:wp(90),
     marginHorizontal:'auto',
-    elevation: 4,
+    // elevation: 4,
   },
-  navTitle: { fontSize: 20, fontWeight: "bold", color: "#fff" },
+  navTitle: { fontSize: 20, fontWeight: "bold", color: "#000" },
 
   // Profile Card
   profileCard: {

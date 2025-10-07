@@ -33,9 +33,11 @@ let [IsCurr,setIsCurr]=useState()
       let [IsLogin,setisLogin]=useState(false)
     let [oneloop,setoneloop]=useState(false)
     // let [IsDownloadPage,setIsDownloadpage]=useState(false)
+    
     let [IconSize,setIconSize]=useState(120)
       const [status,setstatus]=useState()
       let [Minute,setMinute]=useState()
+      let [BackgroundImage,setBackgroundImage]=useState("")
       let [songurl,setsongurl]=useState([])
       let [currMinute,setCurrMinute]=useState()
       let [currSec,setcurrSec]=useState()
@@ -164,8 +166,15 @@ setTimeout(()=>{
       setIconSize(parseInt(size))
     } 
   }
+  async function GetBackgroundImageFromPhone(){
+    let bgimage=await SecureStore.getItemAsync('BackgroundImage')
+    if(bgimage){
+      setBackgroundImage(bgimage)
+    }
+  }
 useEffect(()=>{
 GetIconSizeFromPhone();
+GetBackgroundImageFromPhone();
 IsUserOnline();
 },[])
   
@@ -179,10 +188,10 @@ CheackIfTokenExistOrNot()
     <>
 {/* <StatusBar hidden={true} /> */}
 
-    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize}} >
+    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
-   {(userdata.FirstName||internate==false) ?<MusicPlayer  position={'fixed'} bottom={'100px' }  positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
+   {(userdata.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
   
   
    
@@ -194,8 +203,10 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name='ResetPas' options={{headerShown:false}} />
    <Stack.Screen name='Login' options={{headerShown:false}} />
    <Stack.Screen name='setting' options={{headerShown:false}}/>
+   <Stack.Screen name="WallpaperSelector" options={{headerShown:false}}/>
   <Stack.Screen name="PlaylistAdd" options={{headerShown:false}}/>
    <Stack.Screen name='(tabs)' options={{headerShown:false}} />
+   {/* <Stack.Screen name='ChangeBackground' options={{headerShown:false}} /> */}
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />
    <Stack.Screen name='Contact' options={{headerShown:false}} />
     <Stack.Screen name='ShowSong' options={{headerShown:false}} />

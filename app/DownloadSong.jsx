@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { Image, ImageBackground } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from 'expo-router';
 import { useContext, useEffect } from 'react';
@@ -14,7 +14,7 @@ const {width,height}=Dimensions.get('window')
 let   IP='192.168.1.156';
 
 export default function DownloadedSong() {
-  // const {setIsDownloadpage,IsDownloadPage}=useContext(AppContext)
+  const {BackgroundImage,setBackgroundImage}=useContext(AppContext)
   const navigaion=useNavigation()
   const {top}=useSafeAreaInsets();
   const paddingtop=top>0?30:top;
@@ -22,7 +22,7 @@ export default function DownloadedSong() {
     <>
     <AlertNotificationRoot>
       
-      <LinearGradient
+      {BackgroundImage==""?<LinearGradient
             // colors={['white', '#1D8DA3']}
           colors={['white', '#3fa9f5','white','#3fa9f5']}
 
@@ -47,9 +47,27 @@ export default function DownloadedSong() {
       </View>
 
       </View>
-      </LinearGradient>
-      
-    </AlertNotificationRoot>
+      </LinearGradient>:
+      <ImageBackground source={{ uri: BackgroundImage }} style={{ flex: 1 }} >
+ <View style={{flex:1,display:'flex',flexDirection:'column',paddingTop:paddingtop}}>
+      <View style={{display:'flex',justifyContent:'space-between',flexDirection:'row',alignItems:'center',paddingVertical:3,paddingHorizontal:3,borderColor:'black',borderBottomWidth:2}}>
+
+      <TouchableOpacity onPress={()=>{
+        navigaion.goBack()
+        
+      }} style={{width:40,height:40,backgroundColor:'black',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:12,}}>
+        <Image source={lefticon} style={{width:30,height:30}}/>
+      </TouchableOpacity>
+      <Text style={{fontSize:28,fontWeight:'bold'}}>Downloaded Song</Text>
+        </View>
+      <View style={{width,height:hp(90),paddingHorizontal:10,marginTop:20}}>
+        <DownloadScreen/>
+      </View>
+
+      </View>
+   
+      </ImageBackground>
+}    </AlertNotificationRoot>
 
       
     </>

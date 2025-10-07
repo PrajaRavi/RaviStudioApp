@@ -10,7 +10,7 @@ import crossicon from "../assets/cancel.png"
 import threedotoption from "../assets/three-dots.png"
 let   IP='192.168.1.156';
 import { RotatingImage } from './utils/RotateImage'
-
+import { isUserOnline } from './utils/Internate'
 import Entypo from '@expo/vector-icons/Entypo'
 import Slider from '@react-native-community/slider'
 import * as SecureStore from 'expo-secure-store'
@@ -26,17 +26,18 @@ import { AppContext } from './Store'
 import { CircularRainbowVisualizer } from './MusicVisualizer'
 
 
-export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,songurl,setsongurl,UserPlaylistData,userdata
+export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,UserPlaylistData,userdata
 
 }) {
 const spinvalue=useRef(new Animated.Value(0)).current;  
 const {t}=useTranslation()
-     const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,Artist,IsCurr,setIsCurr,oneloop,setoneloop}=useContext(AppContext)
+     const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,Artist,IsCurr,setIsCurr,oneloop,setoneloop,songurl,setsongurl}=useContext(AppContext)
      let Data=useContext(AppContext)
      let [showadd,setshowadd]=useState(false)
     let [IsActive,setIsActive]=useState(false)
     // let [,oneloop,setoneloop]=useState(false)
     let [loop,setloop]=useState(false)
+    let [internate,setinternate]=useState(true)
     let [IsFavrait,setIsFavrait]=useState(false)
   let [LikedSongData,setLikedSongData]=useState([])
   let [AddToPlaylist,setAddToPlaylist]=useState(false)
@@ -44,18 +45,23 @@ const {t}=useTranslation()
     let Inputvalue=useRef()
   let [selectedplaylsit,setselectedplaylist]=useState()
   let [userplaylistSongs,setuserplaylistsongs]=useState([])
+  
              
           
   
   useEffect(()=>{
-      Animated.loop(
-        Animated.timing(spinvalue,{
+    let myinterval=setInterval(()=>{
+      IsUserOnline()
+    },2000)
+    Animated.loop(
+      Animated.timing(spinvalue,{
           toValue:0,
           duration:3000,
-         
+          
           useNativeDriver:true
         })
       ).start()
+      return ()=>clearInterval(myinterval)
     },[spinvalue])
     const spin=spinvalue.interpolate({
       inputRange:[0,1],
@@ -66,6 +72,13 @@ const {t}=useTranslation()
 
 
   } 
+    async function IsUserOnline(){
+  let data=await isUserOnline();
+  // alert(data+"online")
+  if(data==true) setinternate(true)
+    else setinternate(false)
+
+ }
   async function HandlePlay(){
     try {
       
@@ -87,6 +100,9 @@ const {t}=useTranslation()
     }
   }
 async function Handlenext(){
+  // console.log(Bhojsongdata)
+
+  // alert("Music player test hai")
     let Data1=await SecureStore.getItemAsync('SongData')
     let SongData=JSON.parse(Data1)
   //  console.log(Data1)
@@ -97,8 +113,10 @@ async function Handlenext(){
     if(idx<TotalSong-1){
       // alert('if')
       let nextsong=Bhojsongdata[idx+1]
-      CheckSongIsFavrait(nextsong.songname||nextsong.name||nextsong.name)
-      setIsCurr(nextsong.songname||nextsong.name||nextsong.name)
+      CheckSongIsFavrait(nextsong.songname)
+      setIsCurr(nextsong.songname)
+      setsongurl(nextsong.uri)
+      // alert(nextsong.songname+"songname")
       // console.log(nextsong.songname||nextsong.name)
       
       // console.log(nextsong)
@@ -107,8 +125,9 @@ async function Handlenext(){
         
           await sound.pauseAsync()
           await sound.unloadAsync()
+          
            const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:`http://${IP}:4500/${nextsong.songname||nextsong.name||nextsong.name}`
+          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
         },
         {
           shouldPlay:true
@@ -127,23 +146,29 @@ async function Handlenext(){
         setIsPlay(true)
         
         setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name||nextsong.name)
+        setpara(nextsong.songname)
         // alert(nextsong.covername||nextsong.cover)
         // setImageUrl()
         // setSound(sound);
-    setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover||nextsong.cover}`})
+        if(String(nextsong.cover).includes("file:///")){
+
+          setImageUrl({uri:nextsong.cover})
+        }
+        else{
+          setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+        }
 
         // sound.setStatusAsync=true
        
      
         console.log('Playing Sound');
         
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
       }
        else{
           
             const { sound } = await Audio.Sound.createAsync({
-              uri:`http://${IP}:4500/${nextsong.songname||nextsong.name||nextsong.name}`
+              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
             },
             {
               shouldPlay:true
@@ -159,28 +184,38 @@ async function Handlenext(){
             // setSound(sound);
             sound.setStatusAsync=true
             setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name||nextsong.name)
-        setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover||nextsong.cover}`})
+        setpara(nextsong.songname)
+        if(nextsong.cover.includes("file:///")){
+          setImageUrl({uri:nextsong.cover})
+
+        }
+        else{
+
+        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+        }
 
        
             console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
             setIsPlay(true)
             // console.log(status)
             // console.log(status.positionMillis)
           }
     }
     else{
-      alert('else')
+      // alert('else')
       let nextsong=Bhojsongdata[0]
-      console.log(nextsong.songname||nextsong.name||nextsong.name)
+      console.log(nextsong.songname)
+      setsongurl(nextsong.uri)
+      // alert(nextsong.songname+"songname")
+
       if(sound){
         // alert("run")
         
            sound.pauseAsync()
            sound.unloadAsync()
            const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:`http://${IP}:4500/${nextsong.songname||nextsong.name||nextsong.name}`
+          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
         },
         {
           shouldPlay:true
@@ -198,8 +233,14 @@ async function Handlenext(){
         // await Audio.setAudioModeAsync()
         setIsPlay(true)
         setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name)
-        setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover||nextsong.cover}`})
+        setpara(nextsong.songname)
+        if(String(nextsong.cover).includes("file:///")){
+          setImageUrl({uri:nextsong.cover})
+        }
+        else{
+
+        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+        }
 
         
         // setSound(sound);
@@ -208,14 +249,14 @@ async function Handlenext(){
      
         console.log('Playing Sound');
         
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name||nextsong.name,cover:nextsong.cover,idx:0,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:0,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
   
       }
        else{
             // alert('else case')
             // console.log(LSdata.sound)
             const { sound } = await Audio.Sound.createAsync({
-              uri:`http://${IP}:4500/${nextsong.songname||nextsong.name||nextsong.name}`
+              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
             },
             {
               shouldPlay:true
@@ -232,11 +273,17 @@ async function Handlenext(){
             // sound.setStatusAsync=true
             
             setArtist(nextsong.artist)
-            setpara(nextsong.songname||nextsong.name)
+            setpara(nextsong.songname)
+            if(String(nextsong.cover).includes("file:///")){
+              setImageUrl({uri:nextsong.cover})
+            }
+            else{
+
             setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover||nextsong.cover}`})
+            }
 
             console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
             setIsPlay(true)
             // console.log(status)
             // console.log(status.positionMillis)
@@ -262,15 +309,16 @@ async function HandlePrev(){
     if(idx==0){
       // alert('if')
       let nextsong=Bhojsongdata[0]
-      // console.log(nextsong.songname||nextsong.name)
-      // console.log(nextsong)
+      setsongurl(nextsong.uri)
+
       if(sound){
         // alert("run")
         
          await  sound.pauseAsync()
           await sound.unloadAsync()
            const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:`http://${IP}:4500/${nextsong.songname||nextsong.name}`
+          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
+          
         },
         {
           shouldPlay:true
@@ -289,29 +337,27 @@ async function HandlePrev(){
         setIsPlay(true)
         
         setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name)
-        // alert(nextsong.covername||nextsong.cover)
-        // setImageUrl()
-        // setSound(sound);
-    setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+        setpara(nextsong.songname)
+        if(String(nextsong.cover).includes("file:///")){
+          setImageUrl({uri:nextsong.cover})
+        }
+        else{
+
+       setImageUrl({uri:String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
+        }
 
         // sound.setStatusAsync=true
        
      
         console.log('Playing Sound');
         
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
-  // // // console.log(Data.status.didJustFinish)
-  // // // console.log(Data.status)
-  // // // console.log(Data.sound.getStatusAsync())
-  // // // console.log(songurl)
-  // // // console.log('songurl')
+  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
       }
        else{
             // alert('else case')
             // console.log(LSdata.sound)
             const { sound } = await Audio.Sound.createAsync({
-              uri:`http://${IP}:4500/${nextsong.songname||nextsong.name}`
+              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
             },
             {
               shouldPlay:true
@@ -327,12 +373,18 @@ async function HandlePrev(){
             // setSound(sound);
             // sound.setStatusAsync=true
             setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name)
-        setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+        setpara(nextsong.songname)
+        if(String(nextsong.cover).includes("file:///")){
+          setImageUrl({uri:nextsong.cover})
+        }
+        else{
+
+        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
+        }
 
        
             console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
             setIsPlay(true)
             // console.log(status)
             // console.log(status.positionMillis)
@@ -341,16 +393,17 @@ async function HandlePrev(){
     else{
       // alert('else')
       let nextsong=Bhojsongdata[idx-1]
+      setsongurl(nextsong.uri)
       // console.log(nextsong.songname||nextsong.name)
-      setIsCurr(nextsong.songname||nextsong.name)
-      CheckSongIsFavrait(nextsong.songname||nextsong.name)
+      setIsCurr(nextsong.songname)
+      CheckSongIsFavrait(nextsong.songname)
       if(sound){
         // alert("run")
         
            sound.pauseAsync()
            sound.unloadAsync()
            const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:`http://${IP}:4500/${nextsong.songname||nextsong.name}`
+          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
         },
         {
           shouldPlay:true
@@ -368,9 +421,13 @@ async function HandlePrev(){
         // await Audio.setAudioModeAsync()
         setIsPlay(true)
         setArtist(nextsong.artist)
-        setpara(nextsong.songname||nextsong.name)
-        setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
-
+        setpara(nextsong.songname)
+        if(String(nextsong.cover).includes("file:///")){
+          setImageUrl({uri:nextsong.cover})
+        }
+        else{
+        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
+        }
         
         // setSound(sound);
         // sound.setStatusAsync=true
@@ -378,7 +435,7 @@ async function HandlePrev(){
      
         console.log('Playing Sound');
         
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name,cover:nextsong.cover,idx:0,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:0,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
   // // // console.log(Data.status.didJustFinish)
   // // // console.log(Data.status)
   // // // console.log(Data.sound.getStatusAsync())
@@ -389,7 +446,7 @@ async function HandlePrev(){
             // alert('else case')
             // console.log(LSdata.sound)
             const { sound } = await Audio.Sound.createAsync({
-              uri:`http://${IP}:4500/${nextsong.songname||nextsong.name}`
+              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
             },
             {
               shouldPlay:true
@@ -406,11 +463,17 @@ async function HandlePrev(){
             // sound.setStatusAsync=true
             
             setArtist(nextsong.artist)
-            setpara(nextsong.songname||nextsong.name)
-            setImageUrl({uri: `http://${IP}:4500/${nextsong.covername||nextsong.cover}`})
+            setpara(nextsong.songname)
+            if(String(nextsong.cover).includes("file:///")){  
+              setImageUrl({uri:nextsong.cover})
+            }
+            else{
+
+            setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
+            }
 
             console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname||nextsong.name,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
+            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
             setIsPlay(true)
             // console.log(status)
             // console.log(status.positionMillis)
@@ -455,9 +518,9 @@ setIsActive(true)
 
  }
  async function HandleLoop(name){
-  // alert(name)
+  
+  // alert(songurl+"loop")
   if(oneloop==false &&loop==false){
-    alert('one')
     setloop(true)
     setoneloop(true)
     // only one song playing in loop
@@ -467,7 +530,7 @@ setIsActive(true)
              await sound.pauseAsync()
              await sound.unloadAsync()
           const { sound:newSound } = await Audio.Sound.createAsync({
-            uri:`http://${IP}:4500/${name}`
+            uri: songurl.includes("file:///")?songurl:`http://${IP}:4500/${name}`
           },
           {
             shouldPlay:true,
@@ -771,7 +834,7 @@ setOptions(false)
     <>
     <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
 
-     <View style={{position:'absolute',bottom:50,zIndex:30}}  >
+     <View style={{position:'absolute',bottom:70,zIndex:30}}  >
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
@@ -783,7 +846,7 @@ setOptions(false)
   HandleSongMP()
   // alert(para)
   CheckSongIsFavrait(para)
-}} className=' ' ref={Data.songname1}   style={{width:width*0.5,color:'white'}}>{Data.para!=undefined?Data.para.length>40?((Data.para).slice(0,40)+'...'):Data.para:null}</Text>
+}} className=' ' ref={Data.songname1}   style={{width:width*0.5,color:'white'}}>{para!=undefined?para.length>40?((para).slice(0,40)+'...'):para:null}</Text>
 {/* <Text > {para.length>40?(para.slice(0,40)+'...'):para}</Text> */}
 {/* <Image  source={Data.ImageUrl} style={{width:50,height:50,borderRadius:100,borderColor:'#3fa9f5',padding:5,borderWidth:3}} className='w-[50px] hover:scale-50 right-image  h-[50px]     border-2  rounded-full' /> */}
 <RotatingImage imageSource={Data.ImageUrl} size={50} isPlaying={IsPlay} duration={5000} soundObject={sound} />
@@ -836,8 +899,6 @@ return <TouchableOpacity onPress={()=>{
   <Text style={{color:"white",fontSize:40,borderWidth:3,borderColor:'red',width:wp(90),height:hp(40)}}>show ads</Text>
   </View>}
 </View>
-{/* <Image source={Data.ImageUrl} style={{borderColor:'#3fa9f5',borderWidth:5}} className='border-2 z-20 rounded-full relative  w-[80%] h-[300px] mx-auto'>
-</Image> */}
 <View className='w-[90%] mx-auto flex items-center justify-center flex-col'>
 
 <Text className='text-white'>{Data.Artist!=undefined?Data.Artist.length>40?((Data.Artist).slice(0,40)+'...'):Data.Artist:null}</Text>
@@ -875,11 +936,6 @@ return <TouchableOpacity onPress={()=>{
   
 <View style={{position:'relative',display:'flex',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
 
- {/* <SimpleLineIcons onPress={()=>{
-  HandleLoop(Data.para)
- }} name="loop" size={22} className={`my-3 py-3  relative text-white`} color={loop?'#3fa9f5':'white'} >
-
- </SimpleLineIcons> */}
  <TouchableOpacity onPress={()=>{
   HandleLoop(Data.para)
  }}>

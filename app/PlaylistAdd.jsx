@@ -8,11 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { AppContext } from './Store';
+import { ImageBackground } from 'expo-image';
 const {width,height}=Dimensions.get('window');
 let   IP='192.168.1.156';;
 
 const PlaylistAdd = () => {
-  const {IsLogin,setisLogin}=useContext(AppContext)
+  const {IsLogin,setisLogin,BackgroundImage,setBackgroundImage}=useContext(AppContext)
   let [name,setname]=useState()
   
 let [userdata,setuserdata]=useState()
@@ -109,7 +110,7 @@ GetUserData()
   return (
     <>
     <AlertNotificationRoot>
-<LinearGradient
+{BackgroundImage==""?<LinearGradient
       // colors={['white', '#1D8DA3']}
           colors={['white', '#3fa9f5','white','#3fa9f5']}
 
@@ -135,7 +136,28 @@ GetUserData()
                <Text className='text-2xl font-bold border-2 px-5 rounded-md'>Submit</Text>
              </TouchableOpacity> */}
     </View>
-    </LinearGradient>
+    </LinearGradient>:
+    <ImageBackground source={{uri:BackgroundImage}} style={{flex:1}}>
+ <View  style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,width:'100%',height:height}}>
+       
+    <Text className='font-bold ' style={{fontSize:50,marginBottom:10,textAlign:'center',color:globalcolor}}>{t('addyourplaylist')}</Text>
+    <TextInput placeholder={t('playlistname')} placeholderTextColor={globalcolor}   onChangeText={(text)=>setname(text)} value={name}    
+          style={{fontWeight:'bold',fontSize:15,color:globalcolor,borderRadius:23,borderColor:globalcolor,width:width*0.8,borderWidth:2,paddingHorizontal:20}}/>
+    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:globalcolor,borderWidth:2,width:width*0.8,borderRadius:23,paddingHorizontal:5}}  className="font-bold text-xl flex flex-row items-center justify-center gap-4 rounded-md border-2 my-3 border-white w-[80%]">
+      
+
+      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:10}}>{t('choosefile')}</Text>
+      <AntDesign name="upload" size={24} color={globalcolor} />
+    
+    </TouchableOpacity>
+    {/* <Button title='Playlist Image' onPress={pickImage}/> */}
+    {/* <TouchableOpacity onPress={SendData} >
+               <Text className='text-2xl font-bold border-2 px-5 rounded-md'>Submit</Text>
+             </TouchableOpacity> */}
+    </View>
+   
+    </ImageBackground>
+    }
     </AlertNotificationRoot>
       
     </>

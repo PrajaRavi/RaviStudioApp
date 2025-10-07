@@ -13,12 +13,12 @@ import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { AppContext } from '../Store';
 import {hp, wp} from "../helper"
-import { Image } from 'expo-image';
+import { Image, ImageBackground } from 'expo-image';
 import { useNavigation } from 'expo-router';
 const {width,height}=Dimensions.get('window');
 let   IP='192.168.1.155';;
 export default function AddPlaylist() {
-  const {IsLogin,setisLogin,para,ImageUrl,Artist}=useContext(AppContext)
+  const {IsLogin,setisLogin,para,ImageUrl,Artist,BackgroundImage,setBackgroundImage}=useContext(AppContext)
   let [name,setname]=useState()
   
 let [userdata,setuserdata]=useState()
@@ -117,7 +117,7 @@ GetUserData()
   return (
     <>
     <AlertNotificationRoot>
-<LinearGradient
+{BackgroundImage==""?<LinearGradient
       // colors={['white', '#1D8DA3']}
           colors={['white', '#3fa9f5','white','#3fa9f5']}
 
@@ -172,7 +172,57 @@ GetUserData()
       <Text>Showing adds</Text>
 
     </View>
-       </LinearGradient>
+       </LinearGradient>:<ImageBackground source={{ uri: BackgroundImage }} style={{ flex: 1 }} >
+        <View style={styles.container}>
+      {/* Glassmorphic Card 1 */}
+      <TouchableOpacity onPress={()=>{
+              navigation.navigate('FavraitSong')
+
+            }}   style={[styles.card,{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}]}>
+          <Text style={styles.icon}>❤️</Text>
+          {/* <Text style={styles.text}>Liked Songs</Text> */}
+          <Text style={styles.menuText}>{t('Favourite')}</Text>
+          
+      </TouchableOpacity>
+
+      {/* Glassmorphic Card 2 */}
+      <TouchableOpacity activeOpacity={0.3}  style={styles.card}>
+          <TouchableOpacity style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}}>
+
+          <Text style={styles.icon}>🎵</Text>
+          <Text style={styles.text}>Last Played</Text>
+          
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.card1}>
+                <TouchableOpacity >
+                  <Image source={ ImageUrl } style={styles.cover} />
+                </TouchableOpacity>
+
+                <View style={styles.info}>
+                  <Text style={styles.title}>{String(para).length>25?(para).slice(0,25)+"..":para}</Text>
+                  <Text style={styles.Artist}>{Artist}</Text>
+                </View>
+
+              </TouchableOpacity>
+           
+          </TouchableOpacity>
+
+      {/* Glassmorphic Card 3 */}
+      <TouchableOpacity onPress={()=>{
+        navigation.navigate("PlaylistAdd")
+      }} activeOpacity={0.3} style={[styles.card,{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:5}]}>
+          <Text style={styles.icon}>➕</Text>
+          <Text style={styles.text}>Add Your Playlist</Text>
+      </TouchableOpacity>
+    </View>
+    {/* a view for showing ads */}
+    <View style={{borderWidth:3,height:hp(45)}}>
+      <Text>Showing adds</Text>
+
+    </View>
+ 
+        </ImageBackground>}
+
     </AlertNotificationRoot>
       
     </>
