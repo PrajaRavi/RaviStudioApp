@@ -462,14 +462,14 @@ const pickImage = async () => {
       </View>
 
       {/* Info Section */}
-      <View style={styles.infoBox}>
+      {/* <View style={styles.infoBox}>
         <Ionicons name="location-outline" size={20} color="#2196f3" />
         <Text style={styles.infoText}>Mumbai, India</Text>
-      </View>
-      <View style={styles.infoBox}>
+      </View> */}
+      {/* <View style={styles.infoBox}>
         <Ionicons name="calendar-outline" size={20} color="#2196f3" />
         <Text style={styles.infoText}>Joined: Jan 2025</Text>
-      </View>
+      </View> */}
 
       {/* Menu Modal */}
       <Modal

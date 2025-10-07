@@ -14,6 +14,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as SecureStore from "expo-secure-store";
 import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "./Store";
+import deleteicon from "../assets/cancel.png";
 import { LinearGradient } from "expo-linear-gradient";
 import { ImageBackground } from "expo-image";
 
@@ -98,7 +99,29 @@ export default function WallpaperSelector() {
         onPress={() => handleSelect(item.id)}
         style={[styles.wallpaperBox, isSelected && styles.selectedBox]}
       >
+        <TouchableOpacity style={{zIndex:50}} onPress={async()=>{
+          // alert("delete")
+          const filteredWallpapers = wallpapers.filter(w => w.id !== item.id);
+          setWallpapers(filteredWallpapers);
+          await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(filteredWallpapers));
+        }}>
+          {/* <Text>Hello I am RAvi Prajapti and</Text> */}
+          <ImageBackground
+            source={deleteicon}
+            style={{
+              width: 24,
+              height: 24,
+              position: "absolute",
+              top: 15,
+              zIndex:50,
+              right: 15,
+              tintColor: "#3fa9f5",
+            }}
+          />
+        </TouchableOpacity>
         <Image source={{ uri: item.uri }} style={styles.wallpaperImage} />
+
+
       </TouchableOpacity>
     );
   };
@@ -106,7 +129,7 @@ export default function WallpaperSelector() {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#00ffff" />
+        <ActivityIndicator size="large" color="#3fa9f5" />
       </View>
     );
   }
@@ -207,6 +230,7 @@ const styles = StyleSheet.create({
   },
   wallpaperBox: {
     width: "48%",
+    position:'relative',
     aspectRatio: 0.6,
     borderRadius: 15,
     overflow: "hidden",
@@ -214,11 +238,12 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   selectedBox: {
-    borderColor: "#00ffff",
+    borderColor: "#3fa9f5",
   },
   wallpaperImage: {
     width: "100%",
     height: "100%",
+    zIndex:40,
     resizeMode: "cover",
   },
 });
