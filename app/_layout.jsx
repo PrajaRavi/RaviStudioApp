@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import MusicPlayer from './MusicPlayer';
 import { AppContext } from './Store';
+let email;
 import { isUserOnline } from './utils/Internate';
 let   IP='192.168.1.156';
 // import {Slider} from 'react-native'
@@ -102,7 +103,10 @@ let [IsCurr,setIsCurr]=useState()
   
         try {
           let data1=await SecureStore.getItemAsync('user')
-          let email=JSON.parse(data1).email
+          if(!data1){
+            return
+          }
+           email=JSON.parse(data1).email
           
 
         

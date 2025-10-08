@@ -5,6 +5,7 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, StatusBar, StyleSheet
  import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import '../../global.css';
+let email;
 
 
 // import { useNavigation } from '@react-navigation/native';
@@ -277,10 +278,12 @@ const speak = () => {
     
   }
   async function RefreshToken(){
-    // alert('called')
-    // console.log("chala")
- let email= JSON.parse(SecureStore.getItem('user')).email;
-//  console.log(email)
+        let data1=await SecureStore.getItemAsync('user')
+              if(!data1){
+                return
+              }
+               email=JSON.parse(data1).email
+          
  if(email){
 // alert(email)
 axios.defaults.withCredentials=true;
@@ -304,8 +307,12 @@ axios.defaults.withCredentials=true;
     setsearchplaylistdata(data)
   }
   async function GetUserData(){
-let data=JSON.parse(SecureStore.getItem("user")).email
-let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${data}`)
+let data1=await SecureStore.getItemAsync('user')
+              if(!data1){
+                return
+              }
+               email=JSON.parse(data1).email
+        let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
     // console.log(Data.data)
     setuserplaylistdata(Data.data)
   }
@@ -376,9 +383,12 @@ async function func(){
 
  
   async function GenrateTokenOnComingOnHomePage(){
-      let email=JSON.parse(SecureStore.getItem('user')).email;
-      // alert("token gentrated successfully")
-      // alert(email)
+    let data1=await SecureStore.getItemAsync('user')
+              if(!data1){
+                return
+              }
+               email=JSON.parse(data1).email
+        
       if(email!=''){
 
         try {
