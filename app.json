@@ -28,6 +28,13 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+        [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow voice commands to control music playback.",
+          "speechRecognitionPermission": "Allow speech recognition to process music controls."
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",

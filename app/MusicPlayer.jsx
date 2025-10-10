@@ -24,6 +24,12 @@ import { useContext } from 'react'
 import { wp,hp } from './helper'
 import { AppContext } from './Store'
 import { CircularRainbowVisualizer } from './MusicVisualizer'
+// all imports of TTS
+import { 
+  ExpoSpeechRecognitionModule, 
+  useSpeechRecognitionEvent 
+} from 'expo-speech-recognition';
+
 
 
 export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,UserPlaylistData,userdata
@@ -45,9 +51,147 @@ const {t}=useTranslation()
     let Inputvalue=useRef()
   let [selectedplaylsit,setselectedplaylist]=useState()
   let [userplaylistSongs,setuserplaylistsongs]=useState([])
+  let [spokentext,setspokentext]=useState('')
   
-             
+// implementing the TTS
+  const [isRecognizing, setIsRecognizing] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [finalTranscript, setFinalTranscript] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+
+  // --- Event Listeners/Hooks ---
+
+  useSpeechRecognitionEvent('start', () => {
+    setIsRecognizing(true);
+    setIsLoading(false);
+    setTranscript(''); // Clear the interim transcript on start
+  });
+
+  useSpeechRecognitionEvent('end', () => {
+    setIsRecognizing(false);
+  });
+  
+  // This event fires continuously as the user speaks.
+  useSpeechRecognitionEvent('result', async (event) => {
+    
+    const newTranscript = event.results[0]?.transcript || '';
+    setTranscript(newTranscript);
+    if(newTranscript.includes("Ravi")){
+      setTimeout(()=>{
+
+        handleStartRecording();
+      },50)
+      await sound.setVolumeAsync(0.2);
+      
+      if(newTranscript.includes("play")){
+        HandlePlay();
+      setTimeout(async ()=>{
+
+        await sound.setVolumeAsync(1);
+      },2000)
+      }
+      else if(newTranscript.includes("pause")){
+
+        HandlePlay();
+      setTimeout(async ()=>{
+
+        await sound.setVolumeAsync(1);
+      },2000)
+      }
+      else if(newTranscript.includes("next")){
+        Handlenext()
+      setTimeout(async ()=>{
+
+        await sound.setVolumeAsync(1);
+      },2000)
+      }
+      else if(newTranscript.includes("previous")||newTranscript.includes("back")){
+        HandlePrev()
+      setTimeout(async ()=>{
+
+        await sound.setVolumeAsync(1);
+      },2000)
+    }   
+    else{
+      setTimeout(async ()=>{
+
+        await sound.setVolumeAsync(1);
+      },2000)
+    }
+  
+  }
+    // When the 'final' property is true, this is the final, confirmed text for a segment of speech.
+    if (event.final) {
+      // Append the final result to the main history/final result state
+      setFinalTranscript(prev => prev + newTranscript + ' '); 
+      setTranscript(''); // Clear the current interim text
+    }
+    });
+
+  useSpeechRecognitionEvent('error', (event) => {
+    setIsRecognizing(false);
+    setIsLoading(false);
+    console.error('Speech Recognition Error:', event.error);
+    Alert.alert("Error", `Recognition failed: ${event.error?.message}`);
+  });
+
+  // --- Permission and Initialization ---
+
+  useEffect(() => {
+
+    (async () => {
+      setIsLoading(true);
+      const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      if (result.granted) {
+        setIsPermissionGranted(true);
+        handleStartRecording()
+      } else {
+        Alert.alert("Permission Required", "Microphone and speech recognition permissions are needed.");
+        handleStartRecording();
+      }
+      setIsLoading(false);
+    })();
+  }, []);
+  const handleStartRecording = async () => {
+    if (!isPermissionGranted || isLoading) return;
+    
+    try {
+      // Clear all text before starting a new session
+      setTranscript('');
+      setFinalTranscript('');
+      
+      // Start continuous listening
+      await ExpoSpeechRecognitionModule.start({
+        lang: 'en-US',
+        interimResults: true, // Crucial for real-time text
+        continuous: true,    // Crucial for continuous listening
+      });
+      // The 'start' event hook will set isRecognizing to true
+      // alert("started")
+    } catch (error) {
+      console.error('Failed to start recognition:', error);
+      Alert.alert("Error", "Could not start recording.");
+      setIsRecognizing(false);
+    }
+  };
+
+  const handleStopRecording = async () => {
+    try {
+      // Manually stopping recognition. The 'end' event hook will set isRecognizing to false.
+      await ExpoSpeechRecognitionModule.stop();
+      // After stopping, the last 'interim' transcript is usually the final result. 
+      // We push the last interim text to the final display.
+      setFinalTranscript(prev => prev + transcript); 
+      setTranscript('');
+    } catch (error) {
+      console.error('Failed to stop recognition:', error);
+      Alert.alert("Error", "Could not stop recording.");
+    }
+  };
+
           
+  //  finalTranscript.trim() || "The finalized spoken text will appear here once the session ends.";
   
   useEffect(()=>{
     let myinterval=setInterval(()=>{
@@ -511,6 +655,7 @@ SongEnded()
   // CollectDataLS()
 },[status])
  function HandleSongMP(){
+  handleStartRecording()
 setIsActive(true)
  }
  function HandleCross(){

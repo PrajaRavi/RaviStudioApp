@@ -441,7 +441,7 @@ import axios from "axios";
 import { AppContext } from "./Store";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 let IP='192.168.1.156'
-import "../global.css"
+// import "../global.css"
 import { LinearGradient } from "expo-linear-gradient";
 // import { Toast } from "react-native-alert-notification";
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
@@ -494,7 +494,7 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
         uri:`http://${IP}:4500/${name}`
       },
       {
-        shouldPlay:true,
+        shouldPlay:true
       
       },
 
