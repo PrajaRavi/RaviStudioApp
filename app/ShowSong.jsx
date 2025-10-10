@@ -620,7 +620,7 @@ CollectBhojSongData()
             >
                <View style={styles.overlay}>
         <FlatList
-          data={Bhojsongdata}
+          data={searchsongdata.length>0?searchsongdata:Bhojsongdata}
           renderItem={renderSong}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

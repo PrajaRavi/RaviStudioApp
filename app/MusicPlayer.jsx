@@ -24,6 +24,8 @@ import { useContext } from 'react'
 import { wp,hp } from './helper'
 import { AppContext } from './Store'
 import { CircularRainbowVisualizer } from './MusicVisualizer'
+import * as Speech from 'expo-speech'
+
 // all imports of TTS
 import { 
   ExpoSpeechRecognitionModule, 
@@ -36,7 +38,7 @@ export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,H
 
 }) {
 const spinvalue=useRef(new Animated.Value(0)).current;  
-const {t}=useTranslation()
+const {t,i18n}=useTranslation()
      const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,Artist,IsCurr,setIsCurr,oneloop,setoneloop,songurl,setsongurl}=useContext(AppContext)
      let Data=useContext(AppContext)
      let [showadd,setshowadd]=useState(false)
@@ -78,30 +80,292 @@ const {t}=useTranslation()
     const newTranscript = event.results[0]?.transcript || '';
     setTranscript(newTranscript);
     console.log(newTranscript)
-    if(newTranscript.includes("Ravi")){
-      setIsPlay(false)
-        await sound.pauseAsync();
-        
-      handleStopRecording();
-
-      setTimeout(()=>{
-
-        handleStartRecording();
-      },50)
-      await sound.setVolumeAsync(0.2);
+    if(newTranscript.includes("Ravi")||newTranscript.includes("ravi")){
+        await sound.setVolumeAsync(0.2);
+      
       
       if(newTranscript.includes("play")){
-        HandlePlay();
+        setIsPlay(true)
+        await sound.playAsync();
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+if(i18n.language=='ur'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'ur-in-x-urc-local'
+                
+              })
+            }
+            else if(i18n.language=='as'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'as-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='bn'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'bn-IN-language'
+        
+                
+              })
+            }
+            else if(i18n.language=='ml'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'ml-in-x-mlc-local'
+                
+              })
+            }
+            else if(i18n.language=='mr'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'mr-in-x-mrd-local'
+                
+              })
+            }
+            else if(i18n.language=='gu'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'gu-in-x-gud-local'
+                
+              })
+            }
+            else if(i18n.language=='pa'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'pa-in-x-pac-network'
+        
+                
+              })
+            }
+            
+            
+            else if(i18n.language=='te'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'te-in-x-teg-network'
+                
+              })
+            }
+            else if(i18n.language=='kn'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'kn-in-x-knc-network'
+                
+              })
+            }
+            else if(i18n.language=='or'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'or-IN-language'
+                
+              })
+            }
+            else if(i18n.language=='mai'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'mai-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='mni'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'mni-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='sd'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'sd-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='ta'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'ta-in-x-tac-local'
+                
+              })
+            }
+            else if(i18n.language=='mai'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'mai-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='sat'){
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'sat-in-x-end-local'
+                
+              })
+            }
+            else {
+
+              Speech.speak(t('oksongplay'),{
+                rate:0.8,
+                voice:'hi-IN-language'
+                
+              })
+            }
+        },1000)
+        
+      
       }
       else if(newTranscript.includes("pause")){
+  setIsPlay(false)
+        await sound.pauseAsync();
+      
+         setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+if(i18n.language=='ur'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'ur-in-x-urc-local'
+                
+              })
+            }
+            else if(i18n.language=='as'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'as-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='bn'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'bn-IN-language'
+        
+                
+              })
+            }
+            else if(i18n.language=='ml'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'ml-in-x-mlc-local'
+                
+              })
+            }
+            else if(i18n.language=='mr'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'mr-in-x-mrd-local'
+                
+              })
+            }
+            else if(i18n.language=='gu'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'gu-in-x-gud-local'
+                
+              })
+            }
+            else if(i18n.language=='pa'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'pa-in-x-pac-network'
+        
+                
+              })
+            }
+            
+            
+            else if(i18n.language=='te'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'te-in-x-teg-network'
+                
+              })
+            }
+            else if(i18n.language=='kn'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'kn-in-x-knc-network'
+                
+              })
+            }
+            else if(i18n.language=='or'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'or-IN-language'
+                
+              })
+            }
+            else if(i18n.language=='mai'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'mai-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='mni'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'mni-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='sd'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'sd-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='ta'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'ta-in-x-tac-local'
+                
+              })
+            }
+            else if(i18n.language=='mai'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'mai-in-x-end-local'
+                
+              })
+            }
+            else if(i18n.language=='sat'){
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'sat-in-x-end-local'
+                
+              })
+            }
+            else {
 
-        HandlePlay();
+              Speech.speak(t('oksongstop'),{
+                rate:0.8,
+                voice:'hi-IN-language'
+                
+              })
+            }
+        },1000)
+     
       }
-      else if(newTranscript.includes("next")||newTranscript.includes("forward")){
+      else if(newTranscript.includes("next")||newTranscript.includes("forward")||newTranscript.includes("forward")){
         Handlenext()
+         setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },1000)
+     
       }
       else if(newTranscript.includes("previous")||newTranscript.includes("back")){
         HandlePrev()
+         setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },1000)
+     
+    }
+    else{
+      await sound.setVolumeAsync(1);
     }   
   
   }
@@ -180,7 +444,7 @@ const {t}=useTranslation()
   useEffect(()=>{
     let myinterval=setInterval(()=>{
       IsUserOnline()
-    },2000)
+    },1000)
     Animated.loop(
       Animated.timing(spinvalue,{
           toValue:0,
@@ -963,7 +1227,7 @@ setOptions(false)
     <>
     <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
 
-     <View style={{position:'absolute',bottom:70,zIndex:30}}  >
+     <View style={{position:'absolute',bottom:10,zIndex:30}}  >
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
@@ -1039,7 +1303,7 @@ return <TouchableOpacity onPress={()=>{
   HandleAddFavraitSong(Data.para)
 }}>
 
-{IsFavrait?<AntDesign className='absolute right-5 bottom-[40px]' name="heart" size={24} color="red" />:<AntDesign className='absolute right-5 bottom-[40px]' name="heart" size={24} color="white" />}
+{IsFavrait?<AntDesign className='absolute right-5 bottom-[40px]' name="heart" size={24} color="red" />:<AntDesign className='absolute right-9 bottom-[40px]' name="heart" size={24} color="white" />}
 </TouchableOpacity>
 <Slider  style={{ width:'100%',position:'absolute',bottom:20,zIndex:40} }
   minimumValue={0}
