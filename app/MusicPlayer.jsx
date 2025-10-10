@@ -77,7 +77,13 @@ const {t}=useTranslation()
     
     const newTranscript = event.results[0]?.transcript || '';
     setTranscript(newTranscript);
+    console.log(newTranscript)
     if(newTranscript.includes("Ravi")){
+      setIsPlay(false)
+        await sound.pauseAsync();
+        
+      handleStopRecording();
+
       setTimeout(()=>{
 
         handleStartRecording();
@@ -86,39 +92,17 @@ const {t}=useTranslation()
       
       if(newTranscript.includes("play")){
         HandlePlay();
-      setTimeout(async ()=>{
-
-        await sound.setVolumeAsync(1);
-      },2000)
       }
       else if(newTranscript.includes("pause")){
 
         HandlePlay();
-      setTimeout(async ()=>{
-
-        await sound.setVolumeAsync(1);
-      },2000)
       }
-      else if(newTranscript.includes("next")){
+      else if(newTranscript.includes("next")||newTranscript.includes("forward")){
         Handlenext()
-      setTimeout(async ()=>{
-
-        await sound.setVolumeAsync(1);
-      },2000)
       }
       else if(newTranscript.includes("previous")||newTranscript.includes("back")){
         HandlePrev()
-      setTimeout(async ()=>{
-
-        await sound.setVolumeAsync(1);
-      },2000)
     }   
-    else{
-      setTimeout(async ()=>{
-
-        await sound.setVolumeAsync(1);
-      },2000)
-    }
   
   }
     // When the 'final' property is true, this is the final, confirmed text for a segment of speech.
