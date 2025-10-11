@@ -7,7 +7,7 @@ import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 const {width,height}=Dimensions.get('window')
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 export default function ReviewPage({setActiveReviewPage}) {
   const navigation=useNavigation()

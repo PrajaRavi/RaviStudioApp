@@ -60,6 +60,15 @@ const setting = () => {
 
 <Text style={{color:'#555',fontSize:wp(5)}}>Change Background</Text>
 </TouchableOpacity>
+<TouchableOpacity onPress={()=>{
+  
+   navigation.navigate('AIManual')
+}} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:0,    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width:wp(90),paddingVertical:10,borderRadius:15,borderWidth:1 }}>
+
+<Text style={{color:'#555',fontSize:wp(5)}}>AIManual</Text>
+</TouchableOpacity>
+
       </View>
       </LinearGradient>:<ImageBackground source={{ uri: BackgroundImage }} style={{ flex: 1 }} >
          <View style={{flex:1,marginTop:30,alignItems:'center',justifyContent:'start',gap:10}}>
@@ -73,6 +82,14 @@ const setting = () => {
 <Image source={galleryicon} style={{width:40,height:40}}/>
 
 <Text style={{color:'#555',fontSize:wp(5)}}>Change Background</Text>
+</TouchableOpacity>
+<TouchableOpacity onPress={()=>{
+  
+   navigation.navigate('AIManual')
+}} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:0,    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width:wp(90),paddingVertical:10,borderRadius:15,borderWidth:1 }}>
+
+<Text style={{color:'#555',fontSize:wp(5)}}>AIManual</Text>
 </TouchableOpacity>
       </View>
    

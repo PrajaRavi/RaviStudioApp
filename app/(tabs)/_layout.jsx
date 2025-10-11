@@ -119,7 +119,7 @@ import AddPlaylist from "./AddPlaylist";
 import Profile from "./Profile";
 import Search from "./Search";
 import SignUp from "./SignUp";
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 let email;
 const Tab = createBottomTabNavigator();
 
@@ -150,9 +150,9 @@ export default function App() {
           // alert(email)
 
         
-          let {data}=await axios.get(`http://${IP}:4500/user/GetUserData/${email}`)
+          let {data}=await axios.get(`http://${IP}:4500/GetUserData/${email}`)
          setuserdata(data)
-         alert(data.FirstName+"firstname")
+        //  alert(data.FirstName+"firstname")
         } catch (error) {
           console.log(error)
         }
@@ -202,9 +202,9 @@ useEffect(()=>{
       >
         <Tab.Screen name="Home" component={Index} />
         <Tab.Screen name="Search" component={Search} />
-        {!userdata.FirstName?<Tab.Screen name="Signup" component={SignUp} />:null}
+        {!userdata?.FirstName?<Tab.Screen name="Signup" component={SignUp} />:null}
         <Tab.Screen name="Playlist" component={AddPlaylist} />
-       { userdata.FirstName?<Tab.Screen name="Profile" component={Profile} />:null}
+       { userdata?.FirstName?<Tab.Screen name="Profile" component={Profile} />:null}
        
       </Tab.Navigator>
     </>

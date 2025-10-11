@@ -5,7 +5,7 @@ import '../global.css'
 import TabLayout from './(tabs)/_layout'
 // import * as Notification from 'expo-notifications'
 // let   IP='192.168.1.155';;
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 
 
 

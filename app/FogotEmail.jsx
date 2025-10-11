@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form"
 import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import * as yup from "yup"
 const {width,height}=Dimensions.get('window')
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification'

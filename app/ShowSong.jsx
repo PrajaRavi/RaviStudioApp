@@ -9,7 +9,7 @@
 // import { useDownloadManager } from "./hooks/DownloadManager";
 // // import { pushMusicNotification } from './Notifications/Notification';
 // let firstrender=true
-// let   IP='10.205.8.23'
+// let   IP='192.168.1.155'
 ;
 
 // import { Entypo } from '@expo/vector-icons';
@@ -441,7 +441,7 @@ import {
 import axios from "axios";
 import { AppContext } from "./Store";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-let IP='10.205.8.23'
+let IP='192.168.1.155'
 
 // import "../global.css"
 import { LinearGradient } from "expo-linear-gradient";

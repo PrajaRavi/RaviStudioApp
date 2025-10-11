@@ -1,9 +1,9 @@
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-// let   IP='10.205.8.23'
+// let   IP='192.168.1.155'
 ;
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -52,7 +52,7 @@ const {IsLogin,setisLogin,setuserdata}=useContext(AppContext)
     async function onsubmit(Data){
       // console.log(Data)
       axios.defaults.withCredentials=true;
-      let {data}=await axios.post(`http://${IP}:4500/user/Login`,{
+      let {data}=await axios.post(`http://${IP}:4500/Login`,{
         email:Data.email,
         password:Data.password,
         Credential:true

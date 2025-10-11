@@ -7,7 +7,7 @@ import MusicPlayer from './MusicPlayer';
 import { AppContext } from './Store';
 import { isUserOnline } from './utils/Internate';
 let email;
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 // import * as SecureStore from "expo-secure-store"
 ;
 // import {Slider} from 'react-native'
@@ -117,12 +117,12 @@ let [IsCurr,setIsCurr]=useState()
           // alert(email)
 
         
-          let {data}=await axios.get(`http://${IP}:4500/user/GetUserData/${email}`)
+          let {data}=await axios.get(`http://${IP}:4500/GetUserData/${email}`)
          setuserdata(data)
          await SecureStore.setItemAsync('user',JSON.stringify(data))
          
           axios.defaults.withCredentials=true;
-          let Data=await axios.get(`http://${IP}:4500/user/GetUserPlaylistData/${email}`)
+          let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
           // console.log(Data.data)
           setuserplaylistdata(Data.data)
           if(data.FirstName){
@@ -203,7 +203,7 @@ CheackIfTokenExistOrNot()
     <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
-   {(userdata.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
+   {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
   
   
    
@@ -218,6 +218,8 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name="WallpaperSelector" options={{headerShown:false}}/>
   <Stack.Screen name="PlaylistAdd" options={{headerShown:false}}/>
    <Stack.Screen name='(tabs)' options={{headerShown:false}} />
+   <Stack.Screen name='hooks/UseWakeWord' options={{headerShown:false}} />
+   <Stack.Screen name='AIManual' options={{headerShown:false}} />
    {/* <Stack.Screen name='ChangeBackground' options={{headerShown:false}} /> */}
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />
    <Stack.Screen name='Contact' options={{headerShown:false}} />

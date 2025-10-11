@@ -253,7 +253,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hp, wp } from "../helper";
 import { AppContext } from "../Store";
 import { ImageBackground } from 'expo-image';
-let IP='10.205.8.23'
+let IP='192.168.1.155'
 ;;
 
 export default function Profile() {
@@ -322,10 +322,10 @@ const pickImage = async () => {
        
       })
     },1000)
-    DeleteSecureKey("useremail")
+    DeleteSecureKey("user")
           setuserdata([])
           
-     let data=await SecureStore.deleteItemAsync('useremail')
+     let data=await SecureStore.deleteItemAsync('user')
      navigation.navigate("Home")
      await sound.pauseAsync()
      await sound.unloadAsync()

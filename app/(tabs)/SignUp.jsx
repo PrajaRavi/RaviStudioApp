@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { wp } from "../helper";
 // let   IP='192.168.1.155';
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 
   
 // import index from "./(drawer)/index";

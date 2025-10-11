@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppContext } from './Store';
 import { ImageBackground } from 'expo-image';
 const {width,height}=Dimensions.get('window')
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 export default function ProfileUpdate() {
   const {t}=useTranslation()

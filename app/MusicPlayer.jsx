@@ -8,7 +8,7 @@ import playicon from "../assets/play.png"
 import pauseicon from "../assets/pause.png"
 import crossicon from "../assets/cancel.png"
 import threedotoption from "../assets/three-dots.png"
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 import { RotatingImage } from './utils/RotateImage'
 import { isUserOnline } from './utils/Internate'
@@ -27,7 +27,8 @@ import { AppContext } from './Store'
 import { CircularRainbowVisualizer } from './MusicVisualizer'
 import * as Speech from 'expo-speech'
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context'
-
+import VoiceControll from "./voicewakecontroller"
+import { router, useRouter } from 'expo-router'
 // all imports of TTS
 import { 
   ExpoSpeechRecognitionModule, 
@@ -36,7 +37,7 @@ import {
 
 
 
-export default function MusicPlayer({position,bottom,HandlePlay,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,UserPlaylistData,userdata
+export default function MusicPlayer({position,bottom,HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,UserPlaylistData,userdata
 
 }) {
 const spinvalue=useRef(new Animated.Value(0)).current;  
@@ -54,11 +55,10 @@ const {t,i18n}=useTranslation()
   let [Options,setOptions]=useState(false)
     let Inputvalue=useRef()
   let [selectedplaylsit,setselectedplaylist]=useState()
-  
+  const rotuer=useRouter();
   // let [userplaylistSongs,setuserplaylistsongs]=useState([])
   // let [spokentext,setspokentext]=useState('')
   
-
 
 // implementing the TTS
   const [isRecognizing, setIsRecognizing] = useState(false);
@@ -85,14 +85,67 @@ const {t,i18n}=useTranslation()
     const newTranscript = event.results[0]?.transcript || '';
     
     // setTranscript(newTranscript);
-    // console.log(newTranscript)
+    console.log(newTranscript)
     if(newTranscript.includes("echo")||newTranscript.includes("ego")||newTranscript.includes("eko")||newTranscript.includes("Echo")||newTranscript.includes("Eco")||newTranscript.includes("Eeco")){
+      if(sound){
+
         await sound.setVolumeAsync(0.2);
+      } 
+      else{
+        alert("first play any song")
+        return;
+      }
       
       
-      if(newTranscript.includes("play")||newTranscript.includes("start")||newTranscript.includes("start")||newTranscript.includes("clap")||newTranscript.includes("plague")||newTranscript.includes("plate")||newTranscript.includes("place")){
+      if(newTranscript.includes("whoareyou")||newTranscript.includes("who are you")||newTranscript.includes("about yourself")||newTranscript.includes("aboutyourself")||newTranscript.includes("who r u")||newTranscript.includes("who r you")||newTranscript.includes("who r u")||newTranscript.includes("who r u")){
+        await sound.setVolumeAsync(1);
+        Speech.speak("I am your voice assistant")
+        
+      
+      }
+     else if(newTranscript.includes("play")||newTranscript.includes("start")||newTranscript.includes("start")||newTranscript.includes("clap")||newTranscript.includes("plague")||newTranscript.includes("plate")||newTranscript.includes("place")){
         setIsPlay(true)
         await sound.playAsync();
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("open download section")||newTranscript.includes("open downloads")||newTranscript.includes("downloads")||newTranscript.includes("download") ||newTranscript.includes("open download")){
+      // navigation.navigate('DownloadSong')
+      router.push('/DownloadSong')
+      
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("open home section")||newTranscript.includes("open home")||newTranscript.includes("home")||newTranscript.includes("home") ||newTranscript.includes("open home")){
+      // navigation.navigate('DownloadSong')
+      router.push('/(tabs)')
+      
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("open favourite section")||newTranscript.includes("open favourite")||newTranscript.includes("favourite")||newTranscript.includes("favourite") ||newTranscript.includes("open favourite")){
+      // navigation.navigate('DownloadSong')
+      router.push('/FavraitSong')
+      
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("open setting section")||newTranscript.includes("open settings section")||newTranscript.includes("open setting")||newTranscript.includes("open settings")||newTranscript.includes("setting")||newTranscript.includes("setting") ||newTranscript.includes("settings")){
+      // navigation.navigate('DownloadSong')
+      router.push('/setting')
+      
           setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
         },2000)
@@ -116,7 +169,7 @@ await sound.setVolumeAsync(1);
         },2000)
      
       }
-      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")){
+      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")||newTranscript.includes("ecoback")||newTranscript.includes("echoback")){
         HandlePrev()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
@@ -124,7 +177,9 @@ await sound.setVolumeAsync(1);
      
     }
     else{
-      await sound.setVolumeAsync(1);
+         setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
     }   
   
   }
@@ -170,7 +225,7 @@ await sound.setVolumeAsync(1);
       
       // Start continuous listening
       await ExpoSpeechRecognitionModule.start({
-        lang: 'en-US',
+        lang: 'en-IN',
         interimResults: true, // Crucial for real-time text
         continuous: true,    // Crucial for continuous listening
       });
@@ -214,7 +269,7 @@ await sound.setVolumeAsync(1);
         })
       ).start()
       return ()=>clearInterval(myinterval)
-    },[spinvalue])
+    },[])
     const spin=spinvalue.interpolate({
       inputRange:[0,1],
       outputRange:['0deg','3600deg']
@@ -656,9 +711,6 @@ async function SongEnded(){
   CollectDataLS()
   CollectLikedSongData()
 },[])
-  useEffect(()=>{
-  
-},[status])
  function HandleSongMP(){
   handleStartRecording()
   // startListening()
@@ -807,7 +859,7 @@ console.log(Data.data)
     
     try {
       
-      let {data}=await axios.post(`http://${IP}:4500/user/GetUserData`,{Token:result})
+      let {data}=await axios.post(`http://${IP}:4500/GetUserData`,{Token:result})
       let Data = await axios.post(
     `http://${IP}:4500/AddFavSong/${data._id}`,
     { name, cover, artist }
@@ -984,7 +1036,7 @@ setOptions(false)
     
     <>
     
-    <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(94)}}>
+    <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
 
      <View style={{position:'absolute',bottom:10,zIndex:30}}  >
      

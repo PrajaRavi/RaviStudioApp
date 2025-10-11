@@ -27,7 +27,7 @@ import { hp, wp } from "../helper";
 import RiverBackground from '../theme/RiverTheme';
 import { isUserOnline } from "../utils/Internate";
 let firstrender=true
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 
 const styles = StyleSheet.create({
   gradient: {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginHorizontal: 10,
     marginLeft:30,
-    marginBottom:20,
+    marginBottom:80,
   },
   footerText: {
     color: '#000',
@@ -286,7 +286,7 @@ const speak = () => {
           
  if(email){
 axios.defaults.withCredentials=true;
-   let {data}=await axios.get(`http://${IP}:4500/user/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
+   let {data}=await axios.get(`http://${IP}:4500/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
   
    setisLogin(true)
   //  setuserdata(data)
@@ -294,7 +294,7 @@ axios.defaults.withCredentials=true;
 
   }
   async function GetPlaylistData(){
-    let {data}=await axios.get(`http://${IP}:4500/playlist/GetPlaylistData`)
+    let {data}=await axios.get(`http://${IP}:4500/GetPlaylistData`)
     console.log(data)
     setplaylistdata(data)
     
@@ -309,13 +309,13 @@ let data1=await SecureStore.getItemAsync('user')
                 return
               }
                email=JSON.parse(data1).email
-        let Data=await axios.get(`http://${IP}:4500/user/GetUserPlaylistData/${email}`)
+        let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
     // console.log(Data.data)
     setuserplaylistdata(Data.data)
   }
   async function HandleSongPageShift(playlistname){
     // alert(playlistname)
-  if(userdata.FirstName){
+  if(userdata?.FirstName){
 
     let {data}=await axios.get(`http://${IP}:4500/getplaylistdatafromsearch/${playlistname}`)
     
@@ -324,14 +324,7 @@ let data1=await SecureStore.getItemAsync('user')
   } 
   else{
 
- Toast.show({
-            type: ALERT_TYPE.WARNING,
-            title: 'Warning',
-            
-            textBody: 'Login first!!!!',
-      
-          })
-          
+ alert("Please Login First")         
   } 
 
   }
@@ -375,7 +368,7 @@ async function HandleUserSongPageShift(userplaylistname){
 
         try {
           
-          let {data}=await axios.post(`http://${IP}:4500/user/GenrateTokenOnComingOnHomePage`,{email
+          let {data}=await axios.post(`http://${IP}:4500/GenrateTokenOnComingOnHomePage`,{email
     
           })
           // console.log(data)
@@ -428,7 +421,7 @@ setIsSeletedLang(code)
   async function HandleOK(){
     // alert(langcode)
     try {
-      let {data}=await axios.post(`http://${IP}:4500/user/updateuserlang/${userdata.email}`,{language:langcode})
+      let {data}=await axios.post(`http://${IP}:4500/updateuserlang/${userdata.email}`,{language:langcode})
       
       console.log(data)
       i18n.changeLanguage(langcode)
@@ -507,10 +500,25 @@ setIsSeletedLang(code)
               ))}
             </ScrollView>
           </View>
-           {userdata.FirstName?<View style={[styles.section,{}]}>
+           <View style={[styles.section,{}]}>
+             <Text style={styles.sectionTitle}>{t('popularplaylist')}</Text>
+             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
+               {playlistdata.map((playlist,index) => (
+                <TouchableOpacity onPress={()=>{
+                  HandleSongPageShift(playlist.name)
+                }} key={index} style={styles.playlistItem}>
+                  {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
+                <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
+
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+           {<View style={[styles.section,{}]}>
              <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
-               {UserPlaylistData.map((playlist,index) => (
+               {UserPlaylistData?.map((playlist,index) => (
                 <TouchableOpacity onPress={()=>{
                   HandleSongPageShift(playlist.name)
                 }} key={index} style={styles.playlistItem}>
@@ -521,7 +529,7 @@ setIsSeletedLang(code)
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>:null}
+          </View>}
            
 
 {/* Footer Section */}

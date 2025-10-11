@@ -10,7 +10,7 @@ import { Dimensions, ScrollView, Text, TextInput, TouchableOpacity, View } from 
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import * as yup from "yup";
 const {width,height}=Dimensions.get('window')
-let   IP='10.205.8.23'
+let   IP='192.168.1.155'
 ;
 
 const schema = yup
