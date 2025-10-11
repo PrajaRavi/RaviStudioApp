@@ -83,8 +83,9 @@ const {t,i18n}=useTranslation()
   useSpeechRecognitionEvent('result', async (event) => {
     
     const newTranscript = event.results[0]?.transcript || '';
-    setTranscript(newTranscript);
-    console.log(newTranscript)
+    
+    // setTranscript(newTranscript);
+    // console.log(newTranscript)
     if(newTranscript.includes("echo")||newTranscript.includes("ego")||newTranscript.includes("eko")||newTranscript.includes("Echo")||newTranscript.includes("Eco")||newTranscript.includes("Eeco")){
         await sound.setVolumeAsync(0.2);
       
@@ -98,7 +99,7 @@ await sound.setVolumeAsync(1);
         
       
       }
-      else if(newTranscript.includes("pause")||newTranscript.includes("pose")||newTranscript.includes("stop")||newTranscript.includes("cause")||newTranscript.includes("paws")||newTranscript.includes("paz")){
+      else if(newTranscript.includes("pause")||newTranscript.includes("pose")||newTranscript.includes("stop")||newTranscript.includes("cause")||newTranscript.includes("paws")||newTranscript.includes("paz")||newTranscript.includes("EcoSport")){
   setIsPlay(false)
         await sound.pauseAsync();
       
@@ -108,14 +109,14 @@ await sound.setVolumeAsync(1);
         },2000)
      
       }
-      else if(newTranscript.includes("next")||newTranscript.includes("forward")||newTranscript.includes("forward")){
+      else if(newTranscript.includes("next")||newTranscript.includes("forward")||newTranscript.includes("forward")||newTranscript.includes("echonext")||newTranscript.includes("econext")||newTranscript.includes("Econext")){
         Handlenext()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
         },2000)
      
       }
-      else if(newTranscript.includes("previous")||newTranscript.includes("back")){
+      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")){
         HandlePrev()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
@@ -128,7 +129,7 @@ await sound.setVolumeAsync(1);
   
   }
     // When the 'final' property is true, this is the final, confirmed text for a segment of speech.
-    if (event.final) {
+    if (event.isFinal) {
       // Append the final result to the main history/final result state
       setFinalTranscript(prev => prev + newTranscript + ' '); 
       setTranscript(''); // Clear the current interim text
@@ -197,7 +198,8 @@ await sound.setVolumeAsync(1);
   };
 
           
-//   //  finalTranscript.trim() || "The finalized spoken text will appear here once the session ends.";
+    // finalTranscript.trim() || "The finalized spoken text will appear here once the session ends.";
+    // console.log(finalTranscript.trim())
   
   useEffect(()=>{
     let myinterval=setInterval(()=>{
