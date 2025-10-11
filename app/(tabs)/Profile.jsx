@@ -253,7 +253,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hp, wp } from "../helper";
 import { AppContext } from "../Store";
 import { ImageBackground } from 'expo-image';
-let IP='192.168.1.156';;
+let IP='10.205.8.23'
+;;
 
 export default function Profile() {
 
@@ -268,6 +269,10 @@ async function DeleteSecureKey(key){
   let data=await SecureStore.deleteItemAsync(key)
 }
 
+async function getuserdatafromLS(){
+  let data=await SecureStore.getItemAsync('user')
+  setuserdata(JSON.parse(data))
+}
 const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -330,6 +335,7 @@ const pickImage = async () => {
   }
   useEffect(()=>{
     // alert("Profile")
+    getuserdatafromLS()
     setuserdp(userdata.Profile)
   })
   return (

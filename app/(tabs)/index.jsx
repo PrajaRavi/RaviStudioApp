@@ -27,7 +27,7 @@ import { hp, wp } from "../helper";
 import RiverBackground from '../theme/RiverTheme';
 import { isUserOnline } from "../utils/Internate";
 let firstrender=true
-let   IP='192.168.1.156';;
+let   IP='10.205.8.23'
 
 const styles = StyleSheet.create({
   gradient: {
@@ -285,19 +285,16 @@ const speak = () => {
                email=JSON.parse(data1).email
           
  if(email){
-// alert(email)
 axios.defaults.withCredentials=true;
-   let {data}=await axios.get(`http://${IP}:4500/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
-  //  console.log(data)
-  //  console.log("data hai")
+   let {data}=await axios.get(`http://${IP}:4500/user/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
   
    setisLogin(true)
-   setuserdata(data)
+  //  setuserdata(data)
              }
 
   }
   async function GetPlaylistData(){
-    let {data}=await axios.get(`http://${IP}:4500/GetPlaylistData`)
+    let {data}=await axios.get(`http://${IP}:4500/playlist/GetPlaylistData`)
     console.log(data)
     setplaylistdata(data)
     
@@ -312,7 +309,7 @@ let data1=await SecureStore.getItemAsync('user')
                 return
               }
                email=JSON.parse(data1).email
-        let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
+        let Data=await axios.get(`http://${IP}:4500/user/GetUserPlaylistData/${email}`)
     // console.log(Data.data)
     setuserplaylistdata(Data.data)
   }
@@ -364,22 +361,7 @@ async function HandleUserSongPageShift(userplaylistname){
   }
   
     
-    async function CollectUserPlaylistData(){
     
-    }
-async function func(){
-  // alert("hello")
-  // alert(IsSelectedLang)
-  try {
-    // i18n.changeLanguage("hi")
-    
-   
-  } catch (error) {
-    console.log(error)
-  }
- 
-
-}
 
  
   async function GenrateTokenOnComingOnHomePage(){
@@ -393,7 +375,7 @@ async function func(){
 
         try {
           
-          let {data}=await axios.post(`http://${IP}:4500/GenrateTokenOnComingOnHomePage`,{email
+          let {data}=await axios.post(`http://${IP}:4500/user/GenrateTokenOnComingOnHomePage`,{email
     
           })
           // console.log(data)
@@ -418,7 +400,6 @@ let data=await SecureStore.deleteItemAsync('Token');
       // alert("hello")
       return (()=>clearInterval(myinterval))
 })
-      func()
       GenrateTokenOnComingOnHomePage();
      
   
@@ -426,7 +407,6 @@ let data=await SecureStore.deleteItemAsync('Token');
       GetUserData()
       GetSingerData()
       GetPlaylistData()
-      CollectUserPlaylistData()
       let Intarval=setInterval(()=>{
         RefreshToken()
         // alert('refresh')
@@ -448,7 +428,7 @@ setIsSeletedLang(code)
   async function HandleOK(){
     // alert(langcode)
     try {
-      let {data}=await axios.post(`http://${IP}:4500/updateuserlang/${userdata.email}`,{language:langcode})
+      let {data}=await axios.post(`http://${IP}:4500/user/updateuserlang/${userdata.email}`,{language:langcode})
       
       console.log(data)
       i18n.changeLanguage(langcode)
@@ -527,6 +507,21 @@ setIsSeletedLang(code)
               ))}
             </ScrollView>
           </View>
+           {userdata.FirstName?<View style={[styles.section,{}]}>
+             <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
+             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
+               {UserPlaylistData.map((playlist,index) => (
+                <TouchableOpacity onPress={()=>{
+                  HandleSongPageShift(playlist.name)
+                }} key={index} style={styles.playlistItem}>
+                  {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
+                <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
+
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.playlistname}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>:null}
            
 
 {/* Footer Section */}

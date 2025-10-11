@@ -184,7 +184,8 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { AppContext } from "./Store";
-let   IP='192.168.1.156';
+let   IP='10.205.8.23'
+;
 
 export default function LanguageSelect() {
   const languages = [

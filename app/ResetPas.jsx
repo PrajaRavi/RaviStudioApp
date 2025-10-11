@@ -5,7 +5,8 @@ import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-not
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-let   IP='192.168.1.156';
+let   IP='10.205.8.23'
+;
 
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 // import { useNavigation } from 'expo-router';

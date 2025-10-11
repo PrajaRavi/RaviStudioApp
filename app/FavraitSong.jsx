@@ -15,7 +15,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppContext } from './Store';
 import { ImageBackground } from 'expo-image';
 const {width,height}=Dimensions.get('window')
-let   IP='192.168.1.156';
+let   IP='10.205.8.23'
+;
 export default function FavraitSong() {
   const navigaion=useNavigation()
   let [LikedSongData,setLikedSongData]=useState([])

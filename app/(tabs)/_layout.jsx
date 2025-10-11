@@ -108,7 +108,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet } from 'react-native';
 // import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
 import { LinearGradient } from "expo-linear-gradient";
+import * as SecureStore from 'expo-secure-store';
 import { useContext, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Index from ".";
@@ -117,6 +119,8 @@ import AddPlaylist from "./AddPlaylist";
 import Profile from "./Profile";
 import Search from "./Search";
 import SignUp from "./SignUp";
+let   IP='10.205.8.23'
+let email;
 const Tab = createBottomTabNavigator();
 
 const TabBarBackground = () => (
@@ -129,10 +133,35 @@ const TabBarBackground = () => (
 );
 
 export default function App() {
-  const {userdata,IsLogin}=useContext(AppContext)
-  useEffect(()=>{
-    alert(userdata)
-  },[])
+  const {userdata,IsLogin,setuserdata}=useContext(AppContext)
+//   async function getuserdatafromLS(){
+//     let data=await SecureStore.getItemAsync('user')
+//     setuserdata(JSON.parse(data))
+//   }
+  
+    async function GetUserData(){
+  
+        try {
+          let data1=await SecureStore.getItemAsync('user')
+          if(!data1){
+            return
+          }
+           email=JSON.parse(data1).email
+          // alert(email)
+
+        
+          let {data}=await axios.get(`http://${IP}:4500/user/GetUserData/${email}`)
+         setuserdata(data)
+         alert(data.FirstName+"firstname")
+        } catch (error) {
+          console.log(error)
+        }
+// // alert('getuserdata end');
+}
+useEffect(()=>{
+  GetUserData();
+  // getuserdatafromLS()
+},[])
   return (
     <>|
       <Tab.Navigator

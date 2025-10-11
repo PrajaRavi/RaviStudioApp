@@ -10,8 +10,10 @@ import { DownloadScreen } from "./DownloadScreen";
 import { AppContext } from './Store';
 import { hp } from './helper';
 const {width,height}=Dimensions.get('window')
-// let   IP='192.168.1.156';
-let   IP='192.168.1.156';
+// let   IP='10.205.8.23'
+;
+let   IP='10.205.8.23'
+;
 
 export default function DownloadedSong() {
   const {BackgroundImage,setBackgroundImage}=useContext(AppContext)

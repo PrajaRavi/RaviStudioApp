@@ -9,7 +9,8 @@
 // import { useDownloadManager } from "./hooks/DownloadManager";
 // // import { pushMusicNotification } from './Notifications/Notification';
 // let firstrender=true
-// let   IP='192.168.1.156';
+// let   IP='10.205.8.23'
+;
 
 // import { Entypo } from '@expo/vector-icons';
 // import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -440,7 +441,8 @@ import {
 import axios from "axios";
 import { AppContext } from "./Store";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-let IP='192.168.1.156'
+let IP='10.205.8.23'
+
 // import "../global.css"
 import { LinearGradient } from "expo-linear-gradient";
 // import { Toast } from "react-native-alert-notification";

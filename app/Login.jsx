@@ -1,8 +1,10 @@
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-// let   IP='192.168.1.156';
-let   IP='192.168.1.156';
+// let   IP='10.205.8.23'
+;
+let   IP='10.205.8.23'
+;
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
@@ -34,7 +36,7 @@ export default function Login() {
   })
   
 
-const {IsLogin,setisLogin}=useContext(AppContext)
+const {IsLogin,setisLogin,setuserdata}=useContext(AppContext)
   const navigation=useNavigation()
    const {
       control,
@@ -46,12 +48,11 @@ const {IsLogin,setisLogin}=useContext(AppContext)
       resolver:yupResolver(schema),
      
     })
-    let [userdata,setuserdata]=useState()
     
     async function onsubmit(Data){
       // console.log(Data)
       axios.defaults.withCredentials=true;
-      let {data}=await axios.post(`http://${IP}:4500/Login`,{
+      let {data}=await axios.post(`http://${IP}:4500/user/Login`,{
         email:Data.email,
         password:Data.password,
         Credential:true
@@ -68,6 +69,8 @@ const {IsLogin,setisLogin}=useContext(AppContext)
           
         })
         save("user",JSON.stringify(data.user))
+        setuserdata(JSON.stringify(data.user))
+        
         setTimeout(()=>{
           navigation.navigate('index')
           

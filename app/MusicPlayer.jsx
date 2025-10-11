@@ -8,7 +8,8 @@ import playicon from "../assets/play.png"
 import pauseicon from "../assets/pause.png"
 import crossicon from "../assets/cancel.png"
 import threedotoption from "../assets/three-dots.png"
-let   IP='192.168.1.156';
+let   IP='10.205.8.23'
+;
 import { RotatingImage } from './utils/RotateImage'
 import { isUserOnline } from './utils/Internate'
 import Entypo from '@expo/vector-icons/Entypo'
@@ -25,6 +26,7 @@ import { wp,hp } from './helper'
 import { AppContext } from './Store'
 import { CircularRainbowVisualizer } from './MusicVisualizer'
 import * as Speech from 'expo-speech'
+import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context'
 
 // all imports of TTS
 import { 
@@ -52,9 +54,12 @@ const {t,i18n}=useTranslation()
   let [Options,setOptions]=useState(false)
     let Inputvalue=useRef()
   let [selectedplaylsit,setselectedplaylist]=useState()
-  let [userplaylistSongs,setuserplaylistsongs]=useState([])
-  let [spokentext,setspokentext]=useState('')
   
+  // let [userplaylistSongs,setuserplaylistsongs]=useState([])
+  // let [spokentext,setspokentext]=useState('')
+  
+
+
 // implementing the TTS
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -80,41 +85,41 @@ const {t,i18n}=useTranslation()
     const newTranscript = event.results[0]?.transcript || '';
     setTranscript(newTranscript);
     console.log(newTranscript)
-    if(newTranscript.includes("Ravi")||newTranscript.includes("ravi")){
+    if(newTranscript.includes("echo")||newTranscript.includes("ego")||newTranscript.includes("eko")||newTranscript.includes("Echo")||newTranscript.includes("Eco")||newTranscript.includes("Eeco")){
         await sound.setVolumeAsync(0.2);
       
       
-      if(newTranscript.includes("play")||newTranscript.includes("start")){
+      if(newTranscript.includes("play")||newTranscript.includes("start")||newTranscript.includes("start")||newTranscript.includes("clap")||newTranscript.includes("plague")||newTranscript.includes("plate")||newTranscript.includes("place")){
         setIsPlay(true)
         await sound.playAsync();
           setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
-        },1000)
+        },2000)
         
       
       }
-      else if(newTranscript.includes("pause")||newTranscript.includes("pose")||newTranscript.includes("stop")){
+      else if(newTranscript.includes("pause")||newTranscript.includes("pose")||newTranscript.includes("stop")||newTranscript.includes("cause")||newTranscript.includes("paws")||newTranscript.includes("paz")){
   setIsPlay(false)
         await sound.pauseAsync();
       
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
 
-        },1000)
+        },2000)
      
       }
       else if(newTranscript.includes("next")||newTranscript.includes("forward")||newTranscript.includes("forward")){
         Handlenext()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
-        },1000)
+        },2000)
      
       }
       else if(newTranscript.includes("previous")||newTranscript.includes("back")){
         HandlePrev()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
-        },1000)
+        },2000)
      
     }
     else{
@@ -192,12 +197,12 @@ await sound.setVolumeAsync(1);
   };
 
           
-  //  finalTranscript.trim() || "The finalized spoken text will appear here once the session ends.";
+//   //  finalTranscript.trim() || "The finalized spoken text will appear here once the session ends.";
   
   useEffect(()=>{
     let myinterval=setInterval(()=>{
       IsUserOnline()
-    },1000)
+    },2000)
     Animated.loop(
       Animated.timing(spinvalue,{
           toValue:0,
@@ -645,18 +650,16 @@ async function SongEnded(){
 
   useEffect(()=>{
   
-SongEnded()
   
   CollectDataLS()
   CollectLikedSongData()
 },[])
   useEffect(()=>{
-SongEnded()
   
-  // CollectDataLS()
 },[status])
  function HandleSongMP(){
   handleStartRecording()
+  // startListening()
 setIsActive(true)
  }
  function HandleCross(){
@@ -802,7 +805,7 @@ console.log(Data.data)
     
     try {
       
-      let {data}=await axios.post(`http://${IP}:4500/GetUserDataForApp`,{Token:result})
+      let {data}=await axios.post(`http://${IP}:4500/user/GetUserData`,{Token:result})
       let Data = await axios.post(
     `http://${IP}:4500/AddFavSong/${data._id}`,
     { name, cover, artist }
@@ -978,7 +981,8 @@ setOptions(false)
                         return (
     
     <>
-    <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
+    
+    <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(94)}}>
 
      <View style={{position:'absolute',bottom:10,zIndex:30}}  >
      
@@ -1122,6 +1126,7 @@ return <TouchableOpacity onPress={()=>{
 
 </View>:null}
     </View>
+    
 
 </>
       

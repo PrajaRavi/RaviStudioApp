@@ -10,7 +10,8 @@ import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-not
 import { AppContext } from './Store';
 import { ImageBackground } from 'expo-image';
 const {width,height}=Dimensions.get('window');
-let   IP='192.168.1.156';;
+let   IP='10.205.8.23'
+;;
 
 const PlaylistAdd = () => {
   const {IsLogin,setisLogin,BackgroundImage,setBackgroundImage}=useContext(AppContext)

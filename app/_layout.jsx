@@ -5,9 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import MusicPlayer from './MusicPlayer';
 import { AppContext } from './Store';
-let email;
 import { isUserOnline } from './utils/Internate';
-let   IP='192.168.1.156';
+let email;
+let   IP='10.205.8.23'
+// import * as SecureStore from "expo-secure-store"
+;
 // import {Slider} from 'react-native'
 import * as SecureStore from 'expo-secure-store';
 import { useTranslation } from 'react-i18next';
@@ -99,6 +101,11 @@ let [IsCurr,setIsCurr]=useState()
 
     }
   }
+     async function getuserdatafromLS(){
+    let data=await SecureStore.getItemAsync('user')
+    setuserdata(JSON.parse(data))
+  }
+  
   async function GetUserData(){
   
         try {
@@ -107,15 +114,15 @@ let [IsCurr,setIsCurr]=useState()
             return
           }
            email=JSON.parse(data1).email
-          
+          // alert(email)
 
         
-          let {data}=await axios.get(`http://${IP}:4500/GetUserData/${email}`)
-        // alert(data)
-          
-          setuserdata(data)
+          let {data}=await axios.get(`http://${IP}:4500/user/GetUserData/${email}`)
+         setuserdata(data)
+         await SecureStore.setItemAsync('user',JSON.stringify(data))
+         
           axios.defaults.withCredentials=true;
-          let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
+          let Data=await axios.get(`http://${IP}:4500/user/GetUserPlaylistData/${email}`)
           // console.log(Data.data)
           setuserplaylistdata(Data.data)
           if(data.FirstName){
@@ -137,6 +144,7 @@ let [IsCurr,setIsCurr]=useState()
   }
 useEffect(()=>{
     func();
+    getuserdatafromLS();
     SongTimeFormat()
     
 
@@ -203,7 +211,7 @@ CheackIfTokenExistOrNot()
 
    <Stack.Screen name='index' options={{headerShown:false}} />
    <Stack.Screen name='FogotEmail' options={{headerShown:false}} />
-   <Stack.Screen name="DownloadScreen" options={{headerShown:false}}/>
+   {/* <Stack.Screen name="DownloadScreen" options={{headerShown:false}}/> */}
    <Stack.Screen name='ResetPas' options={{headerShown:false}} />
    <Stack.Screen name='Login' options={{headerShown:false}} />
    <Stack.Screen name='setting' options={{headerShown:false}}/>
