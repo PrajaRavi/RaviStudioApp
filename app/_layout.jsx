@@ -51,6 +51,7 @@ let [IsCurr,setIsCurr]=useState()
   let [Bhojsongdata,setBhojsongdata]=useState([])
   let [UserPlaylistData,setuserplaylistdata]=useState([])
   let [ShowMP,setShowMP]=useState(true)
+  let [trigger,settrigger]=useState(true)
   
  async function IsUserOnline(){
   let data=await isUserOnline();
@@ -200,7 +201,7 @@ CheackIfTokenExistOrNot()
     <>
 {/* <StatusBar hidden={true} /> */}
 
-    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl}} >
+    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl,trigger,settrigger}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
    {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
@@ -224,6 +225,7 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />
    <Stack.Screen name='Contact' options={{headerShown:false}} />
     <Stack.Screen name='ShowSong' options={{headerShown:false}} />
+    <Stack.Screen name='WantToStopMusic' options={{headerShown:false}} />
    <Stack.Screen name='FavraitSong' options={{headerShown:false}} />
    <Stack.Screen name='DownloadSong' options={{headerShown:false}} />
    <Stack.Screen name='ProfileUpdate' options={{headerShown:false}} />

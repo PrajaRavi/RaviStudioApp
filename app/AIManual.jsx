@@ -23,6 +23,14 @@ const AIManual = () => {
     <ScrollView style={{padding:20}}>
       <Text style={{fontSize:wp(5),fontWeight:'bold'}}>How to use Virtual Assistant</Text>
       <Text style={{fontSize:wp(4)}}>1.Start saying echo(name of the ai) this ai has limited command</Text>
+      <Text style={{fontSize:wp(4)}}>2.echo play or echo start for play song</Text>
+      <Text style={{fontSize:wp(4)}}>3.echo pause or echo stop for pause song</Text>
+      <Text style={{fontSize:wp(4)}}>4.echo next or echo forward for next song</Text>
+      <Text style={{fontSize:wp(4)}}>5.echo previous or echo back for previous song</Text>
+      <Text style={{fontSize:wp(4)}}>6.echo open download for download section</Text>
+      <Text style={{fontSize:wp(4)}}>7.echo open Favourite for Favourite section</Text>
+      <Text style={{fontSize:wp(4)}}>8.echo open Setting for Setting section</Text>
+      <Text style={{fontSize:wp(4)}}>9.echo open home for home section</Text>
 
     </ScrollView>
     </SafeAreaView>
@@ -32,6 +40,14 @@ const AIManual = () => {
     <ScrollView style={{padding:20}}>
       <Text style={{fontSize:wp(5),fontWeight:'bold'}}>How to use Virtual Assistant</Text>
       <Text style={{fontSize:wp(4)}}>1.Start saying echo(name of the ai) this ai has limited command</Text>
+      <Text style={{fontSize:wp(4)}}>2.echo play for play song</Text>
+      <Text style={{fontSize:wp(4)}}>3.echo pause for pause song</Text>
+      <Text style={{fontSize:wp(4)}}>4.echo next for next song</Text>
+      <Text style={{fontSize:wp(4)}}>5.echo previous for previous song</Text>
+      <Text style={{fontSize:wp(4)}}>6.echo open download for download section</Text>
+      <Text style={{fontSize:wp(4)}}>7.echo open Favourite for Favourite section</Text>
+      <Text style={{fontSize:wp(4)}}>8.echo open Setting for Setting section</Text>
+      <Text style={{fontSize:wp(4)}}>9.echo open home for home section</Text>
 
     </ScrollView>
     </SafeAreaView>

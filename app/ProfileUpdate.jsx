@@ -9,6 +9,7 @@ import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-not
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppContext } from './Store';
 import { ImageBackground } from 'expo-image';
+import * as SecureStore from 'expo-secure-store';
 const {width,height}=Dimensions.get('window')
 let   IP='192.168.1.155'
 ;
@@ -71,31 +72,7 @@ export default function ProfileUpdate() {
       }
     }
     async function GetUserData(){
-      // alert("Hello")
-          let result = await SecureStore.getItemAsync('Token');
-          if (result) {
-            // alert(result);
-            console.log(result)
-            
       
-          } else {
-            alert('No values stored under that key.');
-          }
-      
-          try {
-            
-            let {data}=await axios.post(`http://${IP}:4500/GetUserDataForApp`,{Token:result})
-            // console.log(data)
-            setuserdata(data)
-            if(data.FirstName){
-  
-              setisLogin(true)
-            }
-           
-          } catch (error) {
-            console.log(error)
-          }
-  
   
         }
    useEffect(()=>{

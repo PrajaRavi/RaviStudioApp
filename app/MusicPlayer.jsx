@@ -1,6 +1,7 @@
 
 import { AntDesign, Feather, FontAwesome6, SimpleLineIcons } from '@expo/vector-icons'
 import { Audio } from 'expo-av'
+import { Alert } from 'react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 let {width,height}=Dimensions.get('window')
@@ -8,8 +9,7 @@ import playicon from "../assets/play.png"
 import pauseicon from "../assets/pause.png"
 import crossicon from "../assets/cancel.png"
 import threedotoption from "../assets/three-dots.png"
-let   IP='192.168.1.155'
-;
+let   IP='192.168.1.155';
 import { RotatingImage } from './utils/RotateImage'
 import { isUserOnline } from './utils/Internate'
 import Entypo from '@expo/vector-icons/Entypo'
@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 import '../global.css'
 import nextbtnicon from "../assets/next.png"
 import loopicon from "../assets/exchange.png"
+import { DeviceDetect } from './utils/DeviceDetect'
 // let   IP='192.168.1.155';;
 import axios from 'axios'
 import { useContext } from 'react'
@@ -92,6 +93,7 @@ const {t,i18n}=useTranslation()
         await sound.setVolumeAsync(0.2);
       } 
       else{
+        Speech.speak("first play any song")
         alert("first play any song")
         return;
       }
@@ -103,9 +105,33 @@ const {t,i18n}=useTranslation()
         
       
       }
+     else if(newTranscript.includes("play in loop")){
+      HandleLoop(Data.para);
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
      else if(newTranscript.includes("play")||newTranscript.includes("start")||newTranscript.includes("start")||newTranscript.includes("clap")||newTranscript.includes("plague")||newTranscript.includes("plate")||newTranscript.includes("place")){
         setIsPlay(true)
         await sound.playAsync();
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("show MP")||newTranscript.includes("show mp")||newTranscript.includes("open mp")||newTranscript.includes("so mp")||newTranscript.includes("so MP")||newTranscript.includes("open MP")){
+      HandleSongMP();
+          setTimeout(async ()=>{
+await sound.setVolumeAsync(1);
+        },2000)
+        
+      
+      }
+     else if(newTranscript.includes("close MP")||newTranscript.includes("close mp")){
+      HandleCross();
           setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
         },2000)
@@ -169,7 +195,7 @@ await sound.setVolumeAsync(1);
         },2000)
      
       }
-      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")||newTranscript.includes("ecoback")||newTranscript.includes("echoback")){
+      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")||newTranscript.includes("ecoback")||newTranscript.includes("eco bag")||newTranscript.includes("echoback")){
         HandlePrev()
          setTimeout(async ()=>{
 await sound.setVolumeAsync(1);
@@ -985,7 +1011,7 @@ setOptions(false)
         }
       else{
 
-        
+        ``
         let SongExistOrNot=data.filter((item)=>{
            return item.name==para
           })
@@ -1038,7 +1064,7 @@ setOptions(false)
     
     <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
 
-     <View style={{position:'absolute',bottom:10,zIndex:30}}  >
+     <View style={DeviceDetect()=='Mobile'?{position:'absolute',bottom:10,zIndex:30}: {position:'absolute',bottom:80,zIndex:30}}  >
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
@@ -1057,7 +1083,7 @@ setOptions(false)
 </View>
 </View>
 
-{IsActive?<View style={{backgroundColor:'black',zIndex:50,position:'absolute',bottom:0,padding:5,borderRadius:15,height:hp(70),display:'flex',flexDirection:'column',gap:20,paddingTop:20}} >
+{IsActive?<View style={DeviceDetect()=='Mobile'?{backgroundColor:'black',zIndex:50,position:'absolute',bottom:0,padding:5,borderRadius:15,height:hp(70),display:'flex',flexDirection:'column',gap:20,paddingTop:20}:{backgroundColor:'black',zIndex:50,position:'absolute',bottom:0,padding:5,borderRadius:15,height:hp(80),display:'flex',flexDirection:'column',gap:20,paddingTop:20}} >
 <View className='header flex w-[100%] justify-between flex-row '>
 {/* <Entypo name="cross" onPress={HandleCross} size={40} color="#3fa9f5" /> */}
 <TouchableOpacity onPress={()=>{

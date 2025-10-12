@@ -58,7 +58,7 @@ const setting = () => {
     width:wp(90),paddingVertical:10,borderRadius:15,borderWidth:1 }}>
 <Image source={galleryicon} style={{width:40,height:40}}/>
 
-<Text style={{color:'#555',fontSize:wp(5)}}>Change Background</Text>
+<Text style={{color:'#555',fontSize:15}}>Change Background</Text>
 </TouchableOpacity>
 <TouchableOpacity onPress={()=>{
   
@@ -66,7 +66,7 @@ const setting = () => {
 }} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:0,    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     width:wp(90),paddingVertical:10,borderRadius:15,borderWidth:1 }}>
 
-<Text style={{color:'#555',fontSize:wp(5)}}>AIManual</Text>
+<Text style={{color:'#555',fontSize:15}}>AIManual</Text>
 </TouchableOpacity>
 
       </View>

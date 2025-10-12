@@ -111,7 +111,7 @@ import { StyleSheet } from 'react-native';
 import axios from 'axios';
 import { LinearGradient } from "expo-linear-gradient";
 import * as SecureStore from 'expo-secure-store';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Index from ".";
 import { AppContext } from '../Store';
@@ -119,6 +119,7 @@ import AddPlaylist from "./AddPlaylist";
 import Profile from "./Profile";
 import Search from "./Search";
 import SignUp from "./SignUp";
+import {DeviceDetect} from '../utils/DeviceDetect'
 let   IP='192.168.1.155'
 let email;
 const Tab = createBottomTabNavigator();
@@ -134,9 +135,7 @@ const TabBarBackground = () => (
 
 export default function App() {
   const {userdata,IsLogin,setuserdata}=useContext(AppContext)
-//   async function getuserdatafromLS(){
-//     let data=await SecureStore.getItemAsync('user')
-//     setuserdata(JSON.parse(data))
+  const [device,setdeviece]=useState('Mobile')
 //   }
   
     async function GetUserData(){
@@ -160,11 +159,10 @@ export default function App() {
 }
 useEffect(()=>{
   GetUserData();
-  // getuserdatafromLS()
-},[])
+  },[])
   return (
-    <>|
-      <Tab.Navigator
+    <>
+      {DeviceDetect()=="Mobile"?<Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarBackground: () => <TabBarBackground />,
@@ -206,7 +204,50 @@ useEffect(()=>{
         <Tab.Screen name="Playlist" component={AddPlaylist} />
        { userdata?.FirstName?<Tab.Screen name="Profile" component={Profile} />:null}
        
-      </Tab.Navigator>
+      </Tab.Navigator>:<Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarBackground: () => <TabBarBackground />,
+          textShadowColor: 'rgba(0, 0, 0, 0.75)',
+          tabBarActiveTintColor: 'rgba(0, 0, 0, 0.75)',
+          tabBarActiveBackgroundColor:'white',
+          tabBarPosition:'bottom',
+          
+          tabBarInactiveTintColor: '#000',
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+
+            switch (route.name) {
+              case 'Home':
+                iconName = 'home-outline';
+                break;
+              case 'Search':
+                iconName = 'search-outline';
+                break;
+              case 'Signup':
+                iconName = 'person-add-outline';
+                break;
+              case 'Playlist':
+                iconName = 'musical-notes-outline';
+                break;
+              case 'Profile':
+                iconName = 'person-circle-outline';
+                break;
+              default:
+                iconName = 'ellipse-outline';
+            }
+
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Home" component={Index} />
+        <Tab.Screen name="Search" component={Search} />
+        {!userdata?.FirstName?<Tab.Screen name="Signup" component={SignUp} />:null}
+        <Tab.Screen name="Playlist" component={AddPlaylist} />
+       { userdata?.FirstName?<Tab.Screen name="Profile" component={Profile} />:null}
+       
+      </Tab.Navigator>}
     </>
 
     // </NavigationContainer>

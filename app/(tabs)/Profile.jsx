@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     borderRadius:12,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    width:wp(90),
+    width:wp(96),
     marginHorizontal:'auto',
     // elevation: 4,
   },

@@ -24,6 +24,7 @@ export default function WantToStopMusic({setWantToStopMusic,ActiveWantToStopMusi
     // let Data=await Speech.getAvailableVoicesAsync();
     // console.log(Data)
     await sound.pauseAsync()
+    
   }
   // const {ActiveReveiwPage,setActiveReviewPage}=useContext(AppContext)
   async function HandleYes(){
@@ -419,20 +420,20 @@ else {
          
             </View>
           <View style={{width,height:height,paddingHorizontal:10,marginTop:20,display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <Text style={{fontSize:30,fontWeight:'bold',color:'#54ff1c',marginVertical:5,textAlign:'center'}}>{t('doyouwanttostopmusic')+'?'}</Text>
+            <Text style={{fontSize:30,fontWeight:'bold',color:'#3fa9f5',marginVertical:5,textAlign:'center'}}>{t('doyouwanttostopmusic')+'?'}</Text>
             <View className='w-[100%] flex flex-row items-center justify-center gap-8 my-8'>
 
             <TouchableOpacity onPress={()=>{
               HandleYes()
             }}>
-              <Text className='font-bold text-3xl border-2 rounded-xl border-[#54ff1c] text-[#54ff1c] px-7'>
+              <Text className='font-bold text-3xl border-2 rounded-xl border-[#3fa9f5] text-[#3fa9f5] px-7'>
                 {t('yes')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{
               HandleNo()
             }}>
-              <Text className='font-bold text-3xl border-2 rounded-xl border-[#54ff1c] text-[#54ff1c] px-7'>
+              <Text className='font-bold text-3xl border-2 rounded-xl border-[#3fa9f5] text-[#3fa9f5] px-7'>
                 {t('no')}
               </Text>
             </TouchableOpacity>

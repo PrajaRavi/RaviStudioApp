@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { useColorScheme } from 'react-native';
  import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import '../../global.css';
 let email;
 
-
+import { DeviceDetect } from '../utils/DeviceDetect';
 // import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Link, useNavigation } from 'expo-router';
@@ -15,7 +15,7 @@ import * as ScreenCapture from 'expo-screen-capture';
 import * as SecureStore from 'expo-secure-store';
 import * as Speech from 'expo-speech';
 import { useContext } from 'react';
-import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { AlertNotificationRoot } from 'react-native-alert-notification';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import "../../Services/i18next";
 import { DropImage } from '../DropShape';
@@ -23,7 +23,7 @@ import { AppContext } from '../Store';
 let {width,height}=Dimensions.get('window')
 // import { useTranslation } from 'react-i18next';
 import { useTranslation } from "react-i18next";
-import { hp, wp } from "../helper";
+import { hp } from "../helper";
 import RiverBackground from '../theme/RiverTheme';
 import { isUserOnline } from "../utils/Internate";
 let firstrender=true
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 5,
     textAlign: 'center',
-    fontSize: wp(3),
+    fontSize: 3,
     fontWeight: 'bold',
   },
   playlistItem: {
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
     fontWeight: '700',
-    fontSize: wp(3),
+    fontSize: 3,
   },
   footer: {
     alignItems: 'center',
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: '#000',
-    fontSize: wp(3),
+    fontSize: 3,
     fontWeight: '500',
     marginBottom: 3,
   },
@@ -136,7 +136,7 @@ export default function Index() {
   const {t,i18n}=useTranslation()
   const {top,bottom}=useSafeAreaInsets();
   const paddingtop=top>0?10:top;
-  const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP,IconSize,setIconSize}=useContext(AppContext)
+  const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP,IconSize,setIconSize,trigger,settrigger}=useContext(AppContext)
   const navigation=useNavigation()
   let [singerdata,setsingerdata]=useState([])
 let [playlistdata,setplaylistdata]=useState([])
@@ -314,6 +314,7 @@ let data1=await SecureStore.getItemAsync('user')
     setuserplaylistdata(Data.data)
   }
   async function HandleSongPageShift(playlistname){
+    settrigger(false)
     // alert(playlistname)
   if(userdata?.FirstName){
 
@@ -371,7 +372,8 @@ async function HandleUserSongPageShift(userplaylistname){
           let {data}=await axios.post(`http://${IP}:4500/GenrateTokenOnComingOnHomePage`,{email
     
           })
-          // console.log(data)
+          console.log(data)
+          console.log("token genrated")
         } catch (error) {
           console.log(error)
         }
@@ -393,8 +395,8 @@ let data=await SecureStore.deleteItemAsync('Token');
       // alert("hello")
       return (()=>clearInterval(myinterval))
 })
-      GenrateTokenOnComingOnHomePage();
-     
+
+GenrateTokenOnComingOnHomePage();
   
       activate()
       GetUserData()
@@ -432,6 +434,22 @@ setIsSeletedLang(code)
   }
 
   }
+
+  // this useffect for WantToStopMusic page
+  // useEffect(()=>{
+  //   if(firstrender==false){
+
+  //     let interval=setInterval(() => {
+  //       if(trigger==true){
+  //     alert("chala")
+  //         setWantToStopMusic(true)
+  //       }
+  //     }, 500);
+  //     return ()=>clearInterval(interval)
+  //   }
+  //   firstrender=false;
+
+  // },[trigger])
   useEffect(()=>{   
 // alert(IconSize+"size")
     setIconSize1(IconSize)
@@ -478,7 +496,7 @@ setIsSeletedLang(code)
 
                    <DropImage key={index} size={Iconsize1} src={`http://${IP}:4500/${singer.singerimage}`}/>
                    
-                   <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{singer.name}</Text>
+                   <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{singer.name}</Text>
                  </TouchableOpacity>
               ))}
             </ScrollView>
@@ -495,7 +513,7 @@ setIsSeletedLang(code)
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
                 <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
 
-                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.name}</Text>
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{playlist.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -510,7 +528,7 @@ setIsSeletedLang(code)
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
                 <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
 
-                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.name}</Text>
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{playlist.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -525,7 +543,7 @@ setIsSeletedLang(code)
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
                 <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
 
-                  <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>{playlist.playlistname}</Text>
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{playlist.playlistname}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -534,8 +552,8 @@ setIsSeletedLang(code)
 
 {/* Footer Section */}
            <View style={styles.footer}>
-             <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>© 2024 Music Hub. All rights reserved.</Text>
-             <Text style={IconSize==120?[styles.singerName,{fontSize:wp(3)}]:[styles.singerName,{fontSize:wp(4)}]}>Made with ❤️</Text>
+             <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:14}]}>© 2024 Music Hub. All rights reserved.</Text>
+             <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:14}]}>Made with ❤️</Text>
            </View>
 </View>
 
