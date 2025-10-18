@@ -150,6 +150,7 @@ let [searchplaylistdata,setsearchplaylistdata]=useState([])
 // let [UserPlaylistData,setuserplaylistdata]=useState()
 let [langcode,setlangcode]=useState()
 let [internate,setinternate]=useState();
+let [ShowAI,setShowAI]=useState(false);
 let [lang,setlang]=useState([
     
     {
@@ -309,7 +310,7 @@ let data1=await SecureStore.getItemAsync('user')
                 return
               }
                email=JSON.parse(data1).email
-        let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${email}`)
+        let Data=await axios.get(`http://${IP}:4500/GetUserPlaylistDataApp/${userdata?.email}`)
     // console.log(Data.data)
     setuserplaylistdata(Data.data)
   }
@@ -386,6 +387,7 @@ async function HandleUserSongPageShift(userplaylistname){
 let data=await SecureStore.deleteItemAsync('Token');
   }
   useEffect(()=>{
+    // CollectPlaylistData();
     let myinterval=setInterval(()=>{
 
       IsUserOnline();
@@ -404,6 +406,7 @@ GenrateTokenOnComingOnHomePage();
       GetPlaylistData()
       let Intarval=setInterval(()=>{
         RefreshToken()
+        // GenrateTokenOnComingOnHomePage
         // alert('refresh')
       },2000)
       
@@ -536,17 +539,7 @@ setIsSeletedLang(code)
            {<View style={[styles.section,{}]}>
              <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
-               {UserPlaylistData?.map((playlist,index) => (
-                <TouchableOpacity onPress={()=>{
-                  HandleSongPageShift(playlist.name)
-                }} key={index} style={styles.playlistItem}>
-                  {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
-                <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
-
-                  <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{playlist.playlistname}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+                         </ScrollView>
           </View>}
            
 

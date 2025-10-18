@@ -101,8 +101,8 @@ let ravi={name:'Rai'}
       //     shouldPlay:true
       //   },
       //   (status)=>{
-        //     // console.log(status)
-      //     setstatus(status)
+        //     // 
+      //     
       //     // count=1
       
       //   });
@@ -111,7 +111,7 @@ let ravi={name:'Rai'}
       //   // sound.setStatusAsync=true
       
       //   console.log('Playing Sound');
-      //   console.log(status)
+      //   
       // }
       // {<--------------complete playpause logic-------------------------------->}
       // if(status!=undefined){
@@ -128,8 +128,8 @@ let ravi={name:'Rai'}
             //       shouldPlay:true
             //     },
             //     (status)=>{
-              //       // console.log(status)
-              //       setstatus(status)
+              //       // 
+              //       
               //       // count=1
               
               //     });
@@ -158,13 +158,13 @@ let ravi={name:'Rai'}
 
 
       (status)=>{
-        // console.log(status)
-        setstatus(status)
+        // 
+        
         // count=1
           
       });
       setsound(newSound)
-      console.log(status)
+      
       // await Audio.setAudioModeAsync()
       setIsPlay(true)
       
@@ -174,7 +174,7 @@ let ravi={name:'Rai'}
      
    
       // console.log('Playing Sound');
-      // console.log(status)
+      // 
 
       // console.log(status.isPlaying+'isplaying')
     }
@@ -187,9 +187,9 @@ let ravi={name:'Rai'}
         shouldPlay:true
       },
       (status)=>{
-        // console.log(status)
+        // 
         
-        setstatus(status)
+        
         // count=1
           
       });
@@ -200,7 +200,7 @@ let ravi={name:'Rai'}
  
       // console.log('Playing Sound');
       setIsPlay(true)
-      // console.log(status)
+      // 
       // console.log(status.positionMillis)
       let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
     }
@@ -212,7 +212,7 @@ let ravi={name:'Rai'}
 
   async function HandlePlay(){
     setIsCurr(para)
-    if(status.isPlaying==true){
+    if(IsPlay==true){
       await sound.pauseAsync();
       setIsPlay(false)
       

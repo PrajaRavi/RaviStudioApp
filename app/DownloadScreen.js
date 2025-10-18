@@ -1,19 +1,17 @@
 import { Audio } from "expo-av";
-import { use, useContext, useEffect, useRef, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import deleteicon from "../assets/delete.png";
-import * as SecureStore from "expo-secure-store";
-import nexticon from "../assets/next.png";
 import pauseicon from "../assets/pause.png";
 import playbtnicon from "../assets/play-button.png";
-import playicon from "../assets/play.png";
 import { hp } from "./helper";
 import { useDownloadManager } from "./hooks/DownloadManager";
 import { AppContext } from "./Store";
@@ -30,8 +28,6 @@ export function DownloadScreen() {
     setpara,
     sound,
     setsound,
-    setstatus,
-    status,
     Bhojsongdata,
     setBhojsongdata,
     IsCurr,
@@ -95,11 +91,10 @@ export function DownloadScreen() {
           },
 
           (status) => {
-            setstatus(status);
           }
         );
         setsound(newSound);
-        console.log(status);
+        // ;
         setIsPlay(true);
       } else {
         // alert('else case')
@@ -111,9 +106,9 @@ export function DownloadScreen() {
             shouldPlay: true,
           },
           (status) => {
-            // console.log(status)
+            // 
 
-            setstatus(status);
+            ;
             // count=1
           }
         );
@@ -123,7 +118,7 @@ export function DownloadScreen() {
 
         // console.log('Playing Sound');
         setIsPlay(true);
-        // console.log(status)
+        // 
         // console.log(status.positionMillis)
         let Data = await SecureStore.setItemAsync(
           "SongData",

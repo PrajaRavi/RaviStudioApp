@@ -103,11 +103,11 @@
 
 
 //       (status)=>{
-//         setstatus(status)
+//         
           
 //       });
 //       setsound(newSound)
-//       console.log(status)
+//       
 //       setIsPlay(true)
       
       
@@ -121,9 +121,9 @@
 //         shouldPlay:true
 //       },
 //       (status)=>{
-//         // console.log(status)
+//         // 
         
-//         setstatus(status)
+//         
 //         // count=1
           
 //       });
@@ -134,7 +134,7 @@
  
 //       // console.log('Playing Sound');
 //       setIsPlay(true)
-//       // console.log(status)
+//       // 
 //       // console.log(status.positionMillis)
 //       let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
 //     }
@@ -420,33 +420,33 @@
 import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
 // import { useRouter } from "expo-router";j
-import { wp,hp } from "./helper";
+import { hp, wp } from "./helper";
 import { useDownloadManager } from "./hooks/DownloadManager";
-
-import * as SecureStore from "expo-secure-store";
-import React, { useContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  ImageBackground,
-  Alert,
-} from "react-native";
-import axios from "axios";
-import { AppContext } from "./Store";
+import {playMusic,pauseMusic,setupPlayer,playSong} from "./musicplayer1"
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import axios from "axios";
+import logo from "../assets/ravi4.png"
+import * as SecureStore from "expo-secure-store";
+import { useContext, useEffect, useState } from "react";
+import {
+    FlatList,
+    Image,
+    ImageBackground,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
+import { AppContext } from "./Store";
 let IP='192.168.1.155'
 
 // import "../global.css"
 import { LinearGradient } from "expo-linear-gradient";
 // import { Toast } from "react-native-alert-notification";
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import TrackPlayer from "react-native-track-player";
 
 export default function ShowSong() {
   const {downloadSong}=useDownloadManager()
@@ -454,7 +454,7 @@ export default function ShowSong() {
   const [search, setSearch] = useState("");
   const {params:data}=useRoute();
  let [inputvalue,setinputvalue]=useState('')
-const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,IsCurr,setIsCurr,IsLogin,userdata,BackgroundImage,setBackgroundImage}=useContext(AppContext)
+const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,IsCurr,setIsCurr,IsLogin,userdata,BackgroundImage,setBackgroundImage,settrigger}=useContext(AppContext)
  let [searchsongdata,setsearchsongdata]=useState([])
 
     async function CollectBhojSongData() {
@@ -469,94 +469,116 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
    
     
   }
-  async function playSound(name,cover,idx,artist) {
-    setIsCurr(name)
+  // async function playSound(name,cover,idx,artist) {
+  //   setIsCurr(name)
    
 
-    setArtist(artist)
-    let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-    try {
+  //   setArtist(artist)
+  //   let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
+  //   try {
       
-      await Audio.setAudioModeAsync({
-        staysActiveInBackground:true,
-        shouldDuckAndroid:true,
-        playThroughEarpieceAndroid:false,
-      })
-    } catch (error) {
-      console.log(error)
-    }
-    try {
-    setpara(name)
-    setImageUrl({uri: `http://${IP}:4500/${cover}`})
+  //     await Audio.setAudioModeAsync({
+  //       staysActiveInBackground:true,
+  //       shouldDuckAndroid:true,
+  //       playThroughEarpieceAndroid:false,
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  //   try {
+  //   setpara(name)
+  //   setImageUrl({uri: `http://${IP}:4500/${cover}`})
     
-    if(sound){
-         await sound.pauseAsync()
-         await sound.unloadAsync()
-      const { sound:newSound } = await Audio.Sound.createAsync({
-        uri:`http://${IP}:4500/${name}`
-      },
-      {
-        shouldPlay:true
+  //   if(sound){
+  //        await sound.pauseAsync()
+  //        await sound.unloadAsync()
+  //     const { sound:newSound } = await Audio.Sound.createAsync({
+  //       uri:`http://${IP}:4500/${name}`
+  //     },
+  //     {
+  //       shouldPlay:true
       
-      },
+  //     },
 
 
-      (status)=>{
-        setstatus(status)
-          
-      });
-      setsound(newSound)
-      console.log(status)
-      setIsPlay(true)
-      
-      
-    }
-    else{
-      // alert('else case')
-      const { sound } = await Audio.Sound.createAsync({
-        uri:`http://${IP}:4500/${name}`
-      },
-      {
-        shouldPlay:true
-      },
-      (status)=>{
-        // console.log(status)
+  //     (status)=>{
         
-        setstatus(status)
-        // count=1
+  //       handlePlaybackStatusUpdate(status);
           
-      });
-      setsound(sound)
-      // setSound(sound);
-      // sound.setStatusAsync=true
+  //     });
+  //     setsound(newSound)
+      
+  //     setIsPlay(true)
+      
+      
+  //   }
+  //   else{
+  //     // alert('else case')
+  //     const { sound } = await Audio.Sound.createAsync({
+  //       uri:`http://${IP}:4500/${name}`
+  //     },
+  //     {
+  //       shouldPlay:true
+  //     },
+  //     (status)=>{
+  //       // 
+        
+        
+  //       // count=1
+  //       handlePlaybackStatusUpdate(status);
+  //     });
+  //     setsound(sound)
+  //     // setSound(sound);
+  //     // sound.setStatusAsync=true
       
  
-      // console.log('Playing Sound');
-      setIsPlay(true)
-      // console.log(status)
-      // console.log(status.positionMillis)
-      let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-    }
-    } catch (error) {
-      console.log(error)    
+  //     // console.log('Playing Sound');
+  //     setIsPlay(true)
+  //     // 
+  //     // console.log(status.positionMillis)
+  //     let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
+  //   }
+  //   } catch (error) {
+  //     console.log(error)    
       
-    }
-  }
+  //   }
+  // }
+  async function playSound(name,cover,idx,artist){
 
-  async function HandlePlay(){
-    setIsCurr(para)
-    if(status.isPlaying==true){
-      await sound.pauseAsync();
-      setIsPlay(false)
-      
-    }
-    else{
-      await sound.playAsync();
-      setIsPlay(true)
+    // playSong(idx,`http://${IP}:4500/${name}`,name,artist,`http://${IP}:4500/${cover}`)
+    // await TrackPlayer.reset();
+    
+    // await TrackPlayer.add([{
+    //   id:String(idx),
+    //   url:`http://${IP}:4500/${name}`,
+    //   title:name,
+    //   artist:artist,
+    //   artwork:`http://${IP}:4500/${cover}`,
+    // }])
+    // await TrackPlayer.play();
+    playSong(String(idx),`http://${IP}:4500/${name}`,name,artist,`http://${IP}:4500/${cover}`)
+    setIsCurr(name)
+        setArtist(artist)
+        let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
+            setpara(name)
+        setImageUrl({uri: `http://${IP}:4500/${cover}`})
+          setIsPlay(true)
+//         let newarr=Bhojsongdata.map((item,index)=>{
+//   return ( {
+//     id:String(index+1),
+//     url:`http://${IP}:4500/${item.songname}`,
+//     title:item.songname,
+//     artist:item.artist,
+//     artwork:`http://${IP}:4500/${item.cover?item.cover:item.covername}`
+//   })
+// })
+//       await TrackPlayer.reset();
+//       await TrackPlayer.add(newarr)
 
-    }
-   
-  }
+}
+  
+
+  
 
 
      function HandleSongSearch(name){
@@ -603,6 +625,7 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
 
   useEffect(()=>{
 // alert(data)
+// setupPlayer()
 CollectBhojSongData()
   },[])
   return (

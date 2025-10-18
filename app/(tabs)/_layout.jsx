@@ -137,7 +137,11 @@ export default function App() {
   const {userdata,IsLogin,setuserdata}=useContext(AppContext)
   const [device,setdeviece]=useState('Mobile')
 //   }
-  
+  async function getuserdatafromLS(){
+    let data=await SecureStore.getItemAsync('user')
+    setuserdata(JSON.parse(data))
+    alert(JSON.parse(data).FirstName)
+  }
     async function GetUserData(){
   
         try {
@@ -158,6 +162,7 @@ export default function App() {
 // // alert('getuserdata end');
 }
 useEffect(()=>{
+  getuserdatafromLS()
   GetUserData();
   },[])
   return (

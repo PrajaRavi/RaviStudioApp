@@ -39,7 +39,7 @@ export default function DownloadedSong() {
       <TouchableOpacity onPress={()=>{
         navigaion.goBack()
         
-      }} style={{width:40,height:40,backgroundColor:'black',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:12,}}>
+      }} style={{width:40,height:40,display:'flex',alignItems:'center',justifyContent:'center',borderRadius:12,}}>
         <Image source={lefticon} style={{width:30,height:30}}/>
       </TouchableOpacity>
       <Text style={{fontSize:28,fontWeight:'bold'}}>Downloaded Song</Text>

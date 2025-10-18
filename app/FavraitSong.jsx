@@ -1,9 +1,7 @@
-import { AntDesign, Entypo } from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Entypo } from '@expo/vector-icons';
 import axios from 'axios';
-import play from "../assets/play-button.png"
-import deleteicon from "../assets/delete.png"
 import { Audio } from 'expo-av';
+import { ImageBackground } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -12,8 +10,9 @@ import { useTranslation } from 'react-i18next';
 import { Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import deleteicon from "../assets/delete.png";
+import play from "../assets/play-button.png";
 import { AppContext } from './Store';
-import { ImageBackground } from 'expo-image';
 const {width,height}=Dimensions.get('window')
 let   IP='192.168.1.155'
 ;
@@ -84,13 +83,13 @@ export default function FavraitSong() {
  
  
        (status)=>{
-         // console.log(status)
-         setstatus(status)
+         // 
+         
          // count=1
            
        });
        setsound(newSound)
-       console.log(status)
+      //  
        // await Audio.setAudioModeAsync()
        setIsPlay(true)
        
@@ -100,7 +99,7 @@ export default function FavraitSong() {
       
     
        console.log('Playing Sound');
-       console.log(status)
+      //  
  
        // console.log(status.isPlaying+'isplaying')
      }
@@ -113,9 +112,9 @@ export default function FavraitSong() {
          shouldPlay:true
        },
        (status)=>{
-         // console.log(status)
+         // 
          
-         setstatus(status)
+        //  
          // count=1
            
        });
@@ -126,7 +125,7 @@ export default function FavraitSong() {
   
        console.log('Playing Sound');
        setIsPlay(true)
-       // console.log(status)
+       // 
        // console.log(status.positionMillis)
        let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
      }

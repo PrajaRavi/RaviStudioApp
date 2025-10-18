@@ -22,7 +22,7 @@ export default function useWakeWord({
   const listeningRef = useRef(false);
   const cooldownRef = useRef(false);
   const restartTimer = useRef<number | null>(null);
-const {sound,status,setIsPlay,IsPlay}=useContext<any>(AppContext)
+const {sound,setIsPlay,IsPlay}=useContext<any>(AppContext)
   // Defensive extractor for different event shapes
   const getTranscript = (ev: any) => {
     try {

@@ -6,6 +6,7 @@ import axios from 'axios';
 import MusicPlayer from './MusicPlayer';
 import { AppContext } from './Store';
 import { isUserOnline } from './utils/Internate';
+import TrackPlayer, {useProgress} from "react-native-track-player"
 let email;
 let   IP='192.168.1.155'
 // import * as SecureStore from "expo-secure-store"
@@ -15,6 +16,8 @@ import * as SecureStore from 'expo-secure-store';
 import { useTranslation } from 'react-i18next';
 import ReviewPage from './ReviewPage';
 import WantToStopMusic from './WantToStopMusic';
+
+
 // import { StatusBar } from 'react-native-web';
 export default function _layout() {
   const {t}=useTranslation()
@@ -22,7 +25,7 @@ export default function _layout() {
   let [para,setpara]=useState('Hello I am Hindi Song')
   let [Artist,setArtist]=useState('Ravi Prajapati')
    let [ImageUrl,setImageUrl]=useState(require('../assets/ravi4.png'))
-   
+   const {position,duration}=useProgress()
      let songname1=useRef()
       let [IsPlay,setIsPlay]=useState(false)
 let [IsCurr,setIsCurr]=useState()
@@ -38,7 +41,6 @@ let [IsCurr,setIsCurr]=useState()
     // let [IsDownloadPage,setIsDownloadpage]=useState(false)
     
     let [IconSize,setIconSize]=useState(120)
-      const [status,setstatus]=useState()
       let [Minute,setMinute]=useState()
       let [BackgroundImage,setBackgroundImage]=useState("")
       let [songurl,setsongurl]=useState([])
@@ -60,18 +62,6 @@ let [IsCurr,setIsCurr]=useState()
     else setinternate(false)
 
  }
-   async function func(){
-    try {
-      // alert('run')
-      if(status.isLoaded){
-        setpositioninmilli(status.positionMillis)
-        setdurationinmilli(status.durationMillis)
-        
-      }
-    } catch (error) {
-      console.log(error)
-    }
-   }
    function HandleProgress(value){
 
     // alert(value)
@@ -85,22 +75,7 @@ let [IsCurr,setIsCurr]=useState()
    
   }
   function SongTimeFormat(){
-    if(durationinmilli!=undefined){
-
-      let Totalsecond=Math.floor(durationinmilli/1000)
-      const Minute=Math.floor(Totalsecond/60)
-      const Seconds=Math.floor(Totalsecond%60)
-      
-      setMinute(Minute)
-      setSecond(Seconds)
-      let Totalsecond1=Math.floor(positioninmilli/1000)
-      const currMinute=Math.floor(Totalsecond1/60)
-      const currSec=Math.floor(Totalsecond1%60)
-      
-      setCurrMinute(currMinute)
-      setcurrSec(currSec)
-
-    }
+    setpositioninmilli(position)
   }
      async function getuserdatafromLS(){
     let data=await SecureStore.getItemAsync('user')
@@ -139,17 +114,14 @@ let [IsCurr,setIsCurr]=useState()
 
       }
   function HandleSlider(value){
-    if(sound){
-      sound.setPositionAsync(value)
-    }
+   
   }
 useEffect(()=>{
-    func();
     getuserdatafromLS();
     SongTimeFormat()
     
 
-  },[status!=undefined?status:null])
+  },[trigger])
   useEffect(()=>{
     let newarr=Bhojsongdata.map((item)=>{
          return item.songname
@@ -163,6 +135,12 @@ setTimeout(()=>{
   setActiveReviewPage(true)
 
 },40*10*1000)
+ return () => {
+      // console.log("unmounting the component")
+      TrackPlayer.reset();
+      TrackPlayer.stop();
+
+    };
   },[])
   async function CheackIfTokenExistOrNot(){
     let Token =await SecureStore.getItemAsync('Token')
@@ -201,10 +179,10 @@ CheackIfTokenExistOrNot()
     <>
 {/* <StatusBar hidden={true} /> */}
 
-    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,status,setstatus,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl,trigger,settrigger}} >
+    <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl,trigger,settrigger}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
-   {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second} status={status} setstatus={setstatus} currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
+   {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second}   currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
   
   
    
@@ -221,9 +199,13 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name='(tabs)' options={{headerShown:false}} />
    <Stack.Screen name='hooks/UseWakeWord' options={{headerShown:false}} />
    <Stack.Screen name='AIManual' options={{headerShown:false}} />
+   <Stack.Screen name='hooks/useTrackTime' options={{headerShown:false}} />
+   {/* <Stack.Screen name='musicplayer1' options={{headerShown:false}} /> */}
+
    {/* <Stack.Screen name='ChangeBackground' options={{headerShown:false}} /> */}
    <Stack.Screen name='LanguageSelect' options={{headerShown:false}} />
    <Stack.Screen name='Contact' options={{headerShown:false}} />
+   <Stack.Screen name='service' options={{headerShown:false}} />
     <Stack.Screen name='ShowSong' options={{headerShown:false}} />
     <Stack.Screen name='WantToStopMusic' options={{headerShown:false}} />
    <Stack.Screen name='FavraitSong' options={{headerShown:false}} />

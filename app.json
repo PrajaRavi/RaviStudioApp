@@ -9,9 +9,25 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow speech recognition to process music controls.",
+        "NSMicrophoneUsageDescription": "Allow voice commands to control music playback."
+      }
     },
     "android": {
+       "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "musicapp",
+              "host": "notification.click"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -20,7 +36,13 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.kingravipraj.MusicApp"
+      "package": "com.kingravipraj.MusicApp",
+      "permissions": [
+          "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "WAKE_LOCK",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -28,7 +50,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-        [
+      [
         "expo-speech-recognition",
         {
           "microphonePermission": "Allow voice commands to control music playback.",
@@ -56,7 +78,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "57ccd817-4cdf-4d22-bdf3-7af60fdb8c16"
+        "projectId": "5e00ef60-9a5e-4b3b-9636-cf7c129d150f"
       }
     }
   }
