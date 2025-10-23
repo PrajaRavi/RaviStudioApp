@@ -253,6 +253,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hp, wp } from "../helper";
 import { AppContext } from "../Store";
 import { ImageBackground } from 'expo-image';
+import TrackPlayer from 'react-native-track-player';
 let IP='192.168.1.155'
 ;;
 
@@ -327,10 +328,8 @@ const pickImage = async () => {
           
      let data=await SecureStore.deleteItemAsync('user')
      navigation.navigate("Home")
-     await sound.pauseAsync()
-     await sound.unloadAsync()
-  //  console.log(data)
- 
+     TrackPlayer.reset();
+TrackPlayer.pause(); 
  
   }
   useEffect(()=>{
@@ -376,14 +375,14 @@ const pickImage = async () => {
       </View>
 
       {/* Info Section */}
-      <View style={styles.infoBox}>
+      {/* <View style={styles.infoBox}>
         <Ionicons name="location-outline" size={20} color="#2196f3" />
         <Text style={styles.infoText}>Mumbai, India</Text>
       </View>
       <View style={styles.infoBox}>
         <Ionicons name="calendar-outline" size={20} color="#2196f3" />
         <Text style={styles.infoText}>Joined: Jan 2025</Text>
-      </View>
+      </View> */}
 
       {/* Menu Modal */}
       <Modal
@@ -418,7 +417,7 @@ const pickImage = async () => {
 
             }} style={styles.menuItem}>
               {/* <AntDesign name="heart" size={24} color="red" /> */}
-              <Image source={settingicon} style={{width:35,height:35}}/>
+              <Image source={settingicon} style={{width:25,height:25}}/>
               <Text style={styles.menuText}>{t('settings')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{
@@ -510,7 +509,7 @@ const pickImage = async () => {
 
             }} style={styles.menuItem}>
               {/* <AntDesign name="heart" size={24} color="red" /> */}
-              <Image source={settingicon} style={{width:35,height:35}}/>
+              <Image source={settingicon} style={{width:25,height:25}}/>
               <Text style={styles.menuText}>{t('settings')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{
@@ -553,7 +552,7 @@ const styles = StyleSheet.create({
     borderRadius:12,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    width:wp(96),
+    width:wp(92),
     marginHorizontal:'auto',
     // elevation: 4,
   },
@@ -563,6 +562,7 @@ const styles = StyleSheet.create({
   profileCard: {
     alignItems: "center",
     marginVertical: 20,
+    width:wp(92),
     // backgroundColor: "#fff",
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderWidth:1,

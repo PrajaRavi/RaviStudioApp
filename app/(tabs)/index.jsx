@@ -536,11 +536,23 @@ setIsSeletedLang(code)
               ))}
             </ScrollView>
           </View>
-           {<View style={[styles.section,{}]}>
+           {UserPlaylistData.length>0?<View style={[styles.section,{}]}>
              <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
+
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
+              {UserPlaylistData.map((playlist,index) => (
+                <TouchableOpacity onPress={()=>{
+                  alert(playlist.name)
+                  HandleSongPageShift(playlist.name)
+                }} key={index} style={styles.playlistItem}>
+                  {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
+                <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>
+
+                  <Text style={IconSize==120?[styles.singerName,{fontSize:13}]:[styles.singerName,{fontSize:15}]}>{playlist.playlistname}</Text>
+                </TouchableOpacity>
+              ))}
                          </ScrollView>
-          </View>}
+          </View>:null}
            
 
 {/* Footer Section */}

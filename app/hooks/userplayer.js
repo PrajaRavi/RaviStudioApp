@@ -1,59 +1,40 @@
 import { useEffect, useState } from 'react';
-import TrackPlayer, { Capability, Event, State, usePlaybackState } from 'react-native-track-player';
-// import { usePlaybackState, State } from 'react-native-track-player';
+import TrackPlayer, { Event, usePlaybackState, useTrackPlayerEvents } from 'react-native-track-player';
+
 export default function usePlayer() {
   const playbackState = usePlaybackState();
-  const [isSetup, setIsSetup] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const [progress, setProgress] = useState({ position: 0, duration: 0 });
 
+  // Listen to important playback events
+  useTrackPlayerEvents(
+    [
+      Event.PlaybackTrackChanged,
+      Event.PlaybackQueueEnded,
+      Event.PlaybackProgressUpdated,
+    ],
+    async (event) => {
+      if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+        const track = await TrackPlayer.getTrack(event.nextTrack);
+        setCurrentTrack(track);
+      }
+      if (event.type === Event.PlaybackProgressUpdated) {
+        const progressData = await TrackPlayer.getProgress();
+        setProgress(progressData);
+      }
+    }
+  );
+
+  // Initial load
   useEffect(() => {
-    setupPlayer();
-    return () => {
-      console.log("unmounting the component")
-      TrackPlayer.destroy();
-    };
+    (async () => {
+      const id = await TrackPlayer.getCurrentTrack();
+      if (id != null) {
+        const track = await TrackPlayer.getTrack(id);
+        setCurrentTrack(track);
+      }
+    })();
   }, []);
 
-  async function setupPlayer() {
-    try {
-      await TrackPlayer.setupPlayer();
-      await TrackPlayer.updateOptions({
-        stopWithApp: false,
-        capabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.SkipToNext,
-          Capability.SkipToPrevious,
-          Capability.Stop,
-        ],
-        compactCapabilities: [Capability.Play, Capability.Pause],
-        notificationCapabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.SkipToNext,
-          Capability.SkipToPrevious,
-        ],
-      });
-      setIsSetup(true);
-    } catch (e) {
-      console.log('Track Player setup error:', e);
-    }
-  }
-
-  async function loadTracks(tracks) {
-    await TrackPlayer.reset();
-    await TrackPlayer.add(tracks);
-    await TrackPlayer.play();
-  }
-
-   async function togglePlayback() {
-    const currentState = playbackState?.state || playbackState; // handle both shapes
-
-    if (currentState === State.Playing) {
-      await TrackPlayer.pause();
-    } else {
-      await TrackPlayer.play();
-    }
-  }
-
-  return { playbackState, isSetup, loadTracks, togglePlayback };
+  return { currentTrack, progress, playbackState };
 }

@@ -15,6 +15,7 @@ import playbtnicon from "../assets/play-button.png";
 import { hp } from "./helper";
 import { useDownloadManager } from "./hooks/DownloadManager";
 import { AppContext } from "./Store";
+import TrackPlayer from "react-native-track-player";
 let IP = "10.205.8.23";
 export function DownloadScreen() {
   // const {IsDownloadPage}=useContext(AppContext)
@@ -45,104 +46,131 @@ export function DownloadScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
+  let [Bhojsongdata1,setBhojsongdata1]=useState([])
   const soundRef = useRef(null);
-  useEffect(() => {
-    setBhojsongdata(downloads);
-    console.log(downloads);
-  }, [downloads]);
+  
+  async function AddDownloadedSongInQue(){
+    let newarr=downloads.map((item,index)=>{
+      return {
+        id:String(index),
+        url:item.uri,
+        artwork:item.cover,
+        title:item.songname,
+        artist:item.artist
+      }
+    })
+       await TrackPlayer.reset();
+        await TrackPlayer.add(newarr)
+        console.log(newarr)
+        console.log("downloadnewarr")
+    
+  }
   async function playSound(name, cover, idx, artist, uri) {
+    
     // alert(name+" "+cover+" "+idx+" "+artist)
+    AddDownloadedSongInQue()
     setIsCurr(name);
     setsongurl(uri);
 
     setArtist(artist);
-    let Data = await SecureStore.setItemAsync(
-      "SongData",
-      JSON.stringify({
-        name,
-        cover,
-        idx,
-        artist,
-        TotalSong: Bhojsongdata.length,
-      })
-    );
-    try {
-      await Audio.setAudioModeAsync({
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    try {
-      setpara(name);
-      setImageUrl({ uri: cover });
+    //  console.log(data)
+     
+        setTimeout(async ()=>{
+          await TrackPlayer.skip(Number(idx))
+          await TrackPlayer.play();
+        },500)
+        setpara(name)
+        setArtist(artist)
+        setImageUrl({uri:cover})
+        setIsPlay(true)
+        setIsCurr(name)
+    // let Data = await SecureStore.setItemAsync(
+    //   "SongData",
+    //   JSON.stringify({
+    //     name,
+    //     cover,
+    //     idx,
+    //     artist,
+    //     TotalSong: Bhojsongdata.length,
+    //   })
+    // );
+    // try {
+    //   await Audio.setAudioModeAsync({
+    //     staysActiveInBackground: true,
+    //     shouldDuckAndroid: true,
+    //     playThroughEarpieceAndroid: false,
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // try {
+    //   setpara(name);
+    //   setImageUrl({ uri: cover });
 
-      if (sound) {
-        await sound.pauseAsync();
-        await sound.unloadAsync();
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          {
-            uri: uri,
-          },
-          {
-            shouldPlay: true,
-          },
+    //   if (sound) {
+    //     await sound.pauseAsync();
+    //     await sound.unloadAsync();
+    //     const { sound: newSound } = await Audio.Sound.createAsync(
+    //       {
+    //         uri: uri,
+    //       },
+    //       {
+    //         shouldPlay: true,
+    //       },
 
-          (status) => {
-          }
-        );
-        setsound(newSound);
-        // ;
-        setIsPlay(true);
-      } else {
-        // alert('else case')
-        const { sound } = await Audio.Sound.createAsync(
-          {
-            uri: uri,
-          },
-          {
-            shouldPlay: true,
-          },
-          (status) => {
-            // 
+    //       (status) => {
+    //       }
+    //     );
+    //     setsound(newSound);
+    //     // ;
+    //     setIsPlay(true);
+    //   } else {
+    //     // alert('else case')
+    //     const { sound } = await Audio.Sound.createAsync(
+    //       {
+    //         uri: uri,
+    //       },
+    //       {
+    //         shouldPlay: true,
+    //       },
+    //       (status) => {
+    //         // 
 
-            ;
-            // count=1
-          }
-        );
-        setsound(sound);
-        // setSound(sound);
-        // sound.setStatusAsync=true
+    //         ;
+    //         // count=1
+    //       }
+    //     );
+    //     setsound(sound);
+    //     // setSound(sound);
+    //     // sound.setStatusAsync=true
 
-        // console.log('Playing Sound');
-        setIsPlay(true);
-        // 
-        // console.log(status.positionMillis)
-        let Data = await SecureStore.setItemAsync(
-          "SongData",
-          JSON.stringify({
-            name,
-            cover,
-            idx,
-            artist,
-            TotalSong: Bhojsongdata.length,
-          })
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    //     // console.log('Playing Sound');
+    //     setIsPlay(true);
+    //     // 
+    //     // console.log(status.positionMillis)
+    //     let Data = await SecureStore.setItemAsync(
+    //       "SongData",
+    //       JSON.stringify({
+    //         name,
+    //         cover,
+    //         idx,
+    //         artist,
+    //         TotalSong: Bhojsongdata.length,
+    //       })
+    //     );
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   return (
     <View style={styles.container}>
-      {Bhojsongdata.length === 0 ? (
+      {downloads.length === 0 ? (
         <Text style={styles.empty}>No songs downloaded</Text>
       ) : (
         <FlatList
-          data={Bhojsongdata}
+          data={downloads}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             const isCurrent = currentSong?.id === item.id;
@@ -213,8 +241,8 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    marginBottom: 10,
+    padding: 7,
+    marginBottom: 1,
     // backgroundColor: "#f4f4f4",
     borderRadius: 8,
   },

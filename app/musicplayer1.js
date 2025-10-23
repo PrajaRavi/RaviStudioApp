@@ -3,13 +3,13 @@ import TrackPlayer, {
   RepeatMode,
   State,
   usePlaybackState,
-  AppKilledPlaybackBehavior,
 } from 'react-native-track-player';
-import { manipulateAsync } from 'expo-image-manipulator'; // For logo overlay
+import Marker from 'react-native-image-marker';
+import { Platform } from 'react-native';
 
 let isPlayerInitialized = false;
 
-// 🧩 Initialize Track Player once
+// 🔧 Initialize the player
 export async function setupPlayer() {
   if (isPlayerInitialized) return;
 
@@ -25,47 +25,57 @@ export async function setupPlayer() {
         Capability.SkipToNext,
         Capability.SkipToPrevious,
         Capability.Stop,
+        Capability.SeekTo,
       ],
-      compactCapabilities: [Capability.Play, Capability.Pause],
+      compactCapabilities: [
+        Capability.Play,
+        Capability.Pause,
+        Capability.SeekTo,
+      ],
       notificationCapabilities: [
         Capability.Play,
         Capability.Pause,
         Capability.SkipToNext,
         Capability.SkipToPrevious,
+        Capability.SeekTo,
       ],
-      icon: require('../assets/images/icon.png'), // small notification icon
+      // Use your own small white PNG icon for Android notification
+      icon: require('../assets/images/icon.png'),
     });
+
     isPlayerInitialized = true;
     console.log('✅ Track Player initialized');
-    
-    // await TrackPlayer.add(track)
-    
   } catch (error) {
     console.error('❌ Error setting up Track Player:', error);
   }
 }
 
-// 🎵 Play a specific song
+// 🎵 Play a specific song with overlayed logo
 export async function playSong(idx, url, songname, artist, cover, logo) {
   try {
-
     if (!isPlayerInitialized) await setupPlayer();
 
-    // overlay logo on cover
     let artwork = cover;
+
+    // 🧩 Overlay logo on cover before using it
     if (logo) {
-      const manipulated = await manipulateAsync(
-        cover,
-        [
-          {
-            overlay: logo,
-            position: { bottom: 20, right: 20 },
-            resize: { width: 80, height: 80 },
-          },
-        ],
-        { compress: 1, format: 'jpeg' }
-      );
-      artwork = manipulated.uri;
+      try {
+        console.log('🖼️ Adding logo overlay...');
+        const resultPath = await Marker.markImage({
+          src: cover,            // main image (song cover)
+          markerSrc: logo,       // logo image
+          X: 30,                 // x position
+          Y: 30,                 // y position
+          markerScale: 0.3,      // scale of logo
+          quality: 100,
+          saveFormat: 'jpg',
+        });
+
+        artwork = Platform.OS === 'android' ? `file://${resultPath}` : resultPath;
+        console.log('✅ Overlay applied:', artwork);
+      } catch (err) {
+        console.warn('⚠️ Failed to overlay logo, using original cover:', err);
+      }
     }
 
     await TrackPlayer.reset();
@@ -75,7 +85,7 @@ export async function playSong(idx, url, songname, artist, cover, logo) {
       url,
       title: songname,
       artist,
-      artwork,
+      artwork, // <-- shows in notification too
     };
 
     await TrackPlayer.add([track]);
@@ -87,22 +97,21 @@ export async function playSong(idx, url, songname, artist, cover, logo) {
 }
 
 // ⏯️ Play / Pause toggle
-export async function togglePlayPause() 
-{
-  const playbackState=usePlaybackState();
+export async function togglePlayPause() {
+  const state = await TrackPlayer.getState();
 
-  // console.log(State)
-  if (playbackState === State.Playing) {
+  if (state === State.Playing) {
     await TrackPlayer.pause();
+    console.log('⏸️ Paused');
   } else {
     await TrackPlayer.play();
+    console.log('▶️ Resumed');
   }
-}// ⏭️ Next track
+}
+
+// ⏭️ Next track
 export async function playNext() {
   try {
-    alert("hello")
-  
-    
     await TrackPlayer.skipToNext();
     await TrackPlayer.play();
   } catch (error) {

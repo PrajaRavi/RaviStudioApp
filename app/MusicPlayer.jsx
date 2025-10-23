@@ -5,8 +5,10 @@ import { Audio } from 'expo-av'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, Animated, Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Animated, DeviceEventEmitter, Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 import crossicon from "../assets/cancel.png"
+import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+
 import loopicon from "../assets/exchange.png"
 import nextbtnicon from "../assets/next.png"
 import pauseicon from "../assets/pause.png"
@@ -17,6 +19,8 @@ import logo from "../assets/ravi4.png"
 import { DeviceDetect } from './utils/DeviceDetect'
 import { isUserOnline } from './utils/Internate'
 import { RotatingImage } from './utils/RotateImage'
+import {usePlayPauseSignal} from './hooks/useSongPlayPaus'
+// import {useCurrentTrack} from "./hooks/usecurrentrack"
 let newarr=[];
 // import TrackPlayer from 'react-native-track-player';
 
@@ -40,7 +44,7 @@ import {
 import Progressbar from "./utils/playerprogressbar"
 
 import {setupPlayer,playSong,togglePlayPause,playNext} from "./musicplayer1"
-import TrackPlayer ,{Event,usePlaybackState} from 'react-native-track-player'
+import TrackPlayer ,{Event,RepeatMode,State,usePlaybackState, useTrackPlayerEvents} from 'react-native-track-player'
 import TrackTime from "./hooks/useTrackTime"
 
 export default function MusicPlayer({HandleProgress,HandleSlider,durationinmilli,positioninmilli,Second,Minute,currMinute,currSec,UserPlaylistData,userdata
@@ -64,7 +68,7 @@ const {t,i18n}=useTranslation()
   const rotuer=useRouter();
   // let [userplaylistSongs,setuserplaylistsongs]=useState([])
   // let [spokentext,setspokentext]=useState('')
-  
+  // const {currentTrack,playbackState}=useCurrentTrack()
 const {position,duration}=TrackTime();
 // implementing the TTS
   const [isRecognizing, setIsRecognizing] = useState(false);
@@ -72,6 +76,7 @@ const {position,duration}=TrackTime();
   const [finalTranscript, setFinalTranscript] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  const playback=usePlaybackState();
 
   // --- Event Listeners/Hooks ---
 
@@ -231,9 +236,16 @@ await sound.setVolumeAsync(1);
 
   // setting up the data for next/previous function*ality in react-native-track-player
   async function CheckIfSongEndedOrNot(){
-  TrackPlayer.addEventListener(Event.PlaybackQueueEnded,(data)=>{
-    console.log(data)
-    alert("yes ended")
+  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged,(data)=>{
+    // console.log(data)
+    // alert("yes ended")
+    setTimeout(async ()=>{
+let data=await TrackPlayer.getActiveTrack()
+// alert(data.title)
+setpara(data.title)
+setIsCurr(data.title)
+setImageUrl({uri:data.artwork})
+    },500)
 
   })
 }
@@ -250,13 +262,18 @@ await sound.setVolumeAsync(1);
       })
     })
       setupPlayer();
-      await TrackPlayer.reset();
-      await TrackPlayer.add(newarr)
+      setTimeout(async ()=>{
+
+        await TrackPlayer.reset();
+        await TrackPlayer.add(newarr)
+      },1000)
       
     }
-  
-  // --- Permission and Initialization ---
-  
+
+    
+
+    // --- Permission and Initialization ---
+
   useEffect(() => {
     CheckIfSongEndedOrNot();
    SetUpPlayer();
@@ -317,6 +334,16 @@ await sound.setVolumeAsync(1);
   
   useEffect(()=>{
 // setupSongEndListener(sound, Handlenext)
+ const sub = DeviceEventEmitter.addListener('rntp-player-action', async (data) => {
+      // data = { type: 'next' | 'previous' | 'play' | 'pause' | 'seek', seekTo?: number }
+      // Update UI state by pulling latest info from TrackPlayer
+     
+        if (data?.type === 'nextsong'){
+alert("next song")
+        }
+      
+      })
+      
     let myinterval=setInterval(()=>{
       IsUserOnline()
     },2000)
@@ -392,7 +419,7 @@ async function Handlenext(){
   let data=await TrackPlayer.getActiveTrack();
   console.log(data)
   console.log("data")
-//  CheckSongIsFavrait(data.songname)
+ CheckSongIsFavrait(data.title)
       setIsCurr(data.title)
       setsongurl(data.url)
       setpara(data.title)
@@ -446,193 +473,25 @@ let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.tit
     
   }
 async function HandlePrev(){
-    let Data1=await SecureStore.getItemAsync('SongData')
-    let SongData=JSON.parse(Data1)
-    console.log(SongData)
-    let {idx,TotalSong}=SongData
-    try {
-    //  console.log(SongData.idx)
-    // //  console.log(Data.Bhojsongdata)
-    if(idx==0){
-      // alert('if')
-      let nextsong=Bhojsongdata[0]
-      setsongurl(nextsong.uri)
+   let Data1=await SecureStore.getItemAsync('SongData')
+  console.log(await TrackPlayer.getQueue())
+  console.log("this is queue")
+  // alert(parseInt(JSON.parse(Data1).idx)+1)
 
-      if(sound){
-        // alert("run")
-        
-         await  sound.pauseAsync()
-          await sound.unloadAsync()
-           const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
-          
-        },
-        {
-          shouldPlay:true
-        },
-  
-  
-        (status)=>{
-          // 
-          
-          // count=1
-            
-        });
-        // alert('sound')
-        setsound(newSound)
-        // await Audio.setAudioModeAsync()
-        setIsPlay(true)
-        
-        setArtist(nextsong.artist)
-        setpara(nextsong.songname)
-        if(String(nextsong.cover).includes("file:///")){
-          setImageUrl({uri:nextsong.cover})
-        }
-        else{
+  // await TrackPlayer.skip(parseInt(JSON.parse(Data1).idx)+1);
+  await TrackPlayer.skipToPrevious();
+  await TrackPlayer.play();
+  let data=await TrackPlayer.getActiveTrack();
+  console.log(data)
+  console.log("data")
+ CheckSongIsFavrait(data.title)
+      setIsCurr(data.title)
+      setsongurl(data.url)
+      setpara(data.title)
+      setImageUrl({uri:data.artwork})
+      setArtist(data.artist)
+let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.title,cover:data.artwork,idx:(JSON.parse(Data1).idx)+1,artist:data.artist,TotalSong:Bhojsongdata.length}))
 
-       setImageUrl({uri:String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
-        }
-
-        // sound.setStatusAsync=true
-       
-     
-        console.log('Playing Sound');
-        
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
-      }
-       else{
-            // alert('else case')
-            // console.log(LSdata.sound)
-            const { sound } = await Audio.Sound.createAsync({
-              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
-            },
-            {
-              shouldPlay:true
-            },
-            (status)=>{
-              // 
-              
-              
-              // count=1
-                
-            });
-            setsound(sound)
-            // setSound(sound);
-            // sound.setStatusAsync=true
-            setArtist(nextsong.artist)
-        setpara(nextsong.songname)
-        if(String(nextsong.cover).includes("file:///")){
-          setImageUrl({uri:nextsong.cover})
-        }
-        else{
-
-        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
-        }
-
-       
-            console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
-            setIsPlay(true)
-            // 
-            // console.log(status.positionMillis)
-          }
-    }
-    else{
-      // alert('else')
-      let nextsong=Bhojsongdata[idx-1]
-      setsongurl(nextsong.uri)
-      // console.log(nextsong.songname||nextsong.name)
-      setIsCurr(nextsong.songname)
-      CheckSongIsFavrait(nextsong.songname)
-      if(sound){
-        // alert("run")
-        
-           sound.pauseAsync()
-           sound.unloadAsync()
-           const { sound:newSound } = await Audio.Sound.createAsync({
-          uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
-        },
-        {
-          shouldPlay:true
-        },
-  
-  
-        (status)=>{
-          // 
-          
-          // count=1
-            
-        });
-        // alert('sound')
-        setsound(newSound)
-        // await Audio.setAudioModeAsync()
-        setIsPlay(true)
-        setArtist(nextsong.artist)
-        setpara(nextsong.songname)
-        if(String(nextsong.cover).includes("file:///")){
-          setImageUrl({uri:nextsong.cover})
-        }
-        else{
-        setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
-        }
-        
-        // setSound(sound);
-        // sound.setStatusAsync=true
-       
-     
-        console.log('Playing Sound');
-        
-  let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:0,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
-  // // // console.log(Data.status.didJustFinish)
-  // // // console.log(Data.status)
-  // // // console.log(Data.sound.getStatusAsync())
-  // // // console.log(songurl)
-  // // // console.log('songurl')
-      }
-       else{
-            // alert('else case')
-            // console.log(LSdata.sound)
-            const { sound } = await Audio.Sound.createAsync({
-              uri:String(nextsong.uri).includes("file:///")?nextsong.uri:`http://${IP}:4500/${nextsong.songname}`
-            },
-            {
-              shouldPlay:true
-            },
-            (status)=>{
-              // 
-              
-              
-              // count=1
-                
-            });
-            setsound(sound)
-            // setSound(sound);
-            // sound.setStatusAsync=true
-            
-            setArtist(nextsong.artist)
-            setpara(nextsong.songname)
-            if(String(nextsong.cover).includes("file:///")){  
-              setImageUrl({uri:nextsong.cover})
-            }
-            else{
-
-            setImageUrl({uri: String(nextsong.cover).includes("file:///")?nextsong.cover:`http://${IP}:4500/${nextsong.covername}`})
-            }
-
-            console.log('Playing Sound');
-            let LSData=await SecureStore.setItemAsync('SongData',JSON.stringify({name:nextsong.songname,cover:nextsong.cover,idx:SongData.idx+1,artist:nextsong.artist,TotalSong:Bhojsongdata.length}))
-            setIsPlay(true)
-            // 
-            // console.log(status.positionMillis)
-          }
-    }
-
-   
-     
-             
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   useEffect(()=>{
@@ -654,87 +513,42 @@ setIsActive(true)
   
   // alert(songurl+"loop")
   if(oneloop==false &&loop==false){
-    setloop(true)
-    setoneloop(true)
-    // only one song playing in loop
-      try {
-        if(sound){
-          // alert("run")
-             await sound.pauseAsync()
-             await sound.unloadAsync()
-          const { sound:newSound } = await Audio.Sound.createAsync({
-            uri: songurl.includes("file:///")?songurl:`http://${IP}:4500/${name}`
-          },
-          {
-            shouldPlay:true,
-            isLooping:true,
-          
-          },
-    
-    
-          (status)=>{
-            // 
+    // setloop(true)
+  //  one loop
+  setoneloop(true)
+    // oneloop(true)
+    await TrackPlayer.setRepeatMode(RepeatMode.Track);
+     Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Success',
             
-            // count=1
-              
-          });
-          setsound(newSound)
-          // 
-          // await Audio.setAudioModeAsync()
-          setIsPlay(true)
-          
-          
-          // setSound(sound);
-          // sound.setStatusAsync=true
-         
-       
-          console.log('Playing Sound');
-          // 
-    
-          // console.log(status.isPlaying+'isplaying')
+            textBody: `playing ${name} song in loop`,
+      
+          })
         }
-        else{
-          // alert('else case')
-          const { sound } = await Audio.Sound.createAsync({
-            uri:`http://${IP}:4500/${name}`
-          },
-          {
-            shouldPlay:true
-          },
-          (status)=>{
-            // 
-            
-            
-            // count=1
-              
-          });
-          setsound(sound)
-          // setSound(sound);
-          // sound.setStatusAsync=true
-          
-     
-          console.log('Playing Sound');
-          setIsPlay(true)
-          // 
-          // console.log(status.positionMillis)
-          let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-        }
-        } catch (error) {
-          console.log(error)    
-          
-        }
-    oneloop(true)
-  }
+        
   if(oneloop==true){
     setoneloop(false)
     setloop(true)
+
     // all songs playing in loop
     
+    await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+     Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Success',
+            
+            textBody: `playing All song in loop`,
+      
+          })
 
   }
   if(loop==true && oneloop==false){
     setoneloop(false)
-    alert('all')
+    // loop
+    // alert('all')
+    await TrackPlayer.setRepeatMode(RepeatMode.Off);
+
     setloop(false)
   }
 
@@ -785,8 +599,8 @@ console.log(Data.data)
   );
   // console.log(Data.data)  
   CollectLikedSongData()
-  CheckSongIsFavrait(songname)
   alert('Song added in favrait list')
+  CheckSongIsFavrait(songname)
 } catch (error) {
   console.log(error)
 }
@@ -822,7 +636,7 @@ else{
 if(LikedSongData.length>=1){
 
   let Data=LikedSongData.filter((item)=>{
-    return (item.name==para)
+    return (item.songname==para)
   })
   console.log(Data)
   if(Data.length!=0){
@@ -848,6 +662,7 @@ setOptions(false)
   }
   async function HandleOptions(){
     if(Options==false){
+      
 
       setAddToPlaylist(false)
       setOptions(true)
@@ -952,25 +767,16 @@ setOptions(false)
                }
                         }
 
-  // soundObject.setOnPlaybackStatusUpdate((status) => {
-  //   // Ensure the status is an AVPlaybackStatus
-  //   if (status.isLoaded) {
-  //     // The key property is didJustFinish
-  //     if (status.didJustFinish) {
-  //       alert("Song finished playing.");
-  //       onFinishCallback();
-  //     }
-  //   }
-  // });
+  
 
                         return (
     
     <>
 {/* <NotificationController sound={sound} nextSong={Handlenext} previousSong={HandlePrev}/>     */}
+  {/* <AlertNotificationRoot> */}
+    <View >
 
-    <View style={{position:'absolute',top:0,left:0,width:wp(100),height:hp(100)}}>
-
-     <View style={DeviceDetect()=='Mobile'?{position:'absolute',bottom:10,zIndex:30}: {position:'absolute',bottom:80,zIndex:30}}  >
+     <View style={DeviceDetect()=='Mobile'?{position:'absolute',bottom:50,zIndex:30}: {position:'absolute',bottom:80,zIndex:30}}  >
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
@@ -1095,7 +901,7 @@ return <TouchableOpacity onPress={()=>{
 </View>:null}
     </View>
     
-
+{/* </AlertNotificationRoot> */}
 </>
       
     

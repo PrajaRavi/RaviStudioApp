@@ -107,6 +107,7 @@
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet } from 'react-native';
+import Linking from "../utils/linking."
 // import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { LinearGradient } from "expo-linear-gradient";
@@ -168,13 +169,23 @@ useEffect(()=>{
   return (
     <>
       {DeviceDetect()=="Mobile"?<Tab.Navigator
+      
         screenOptions={({ route }) => ({
+          headerShown:false,
+         tabBarStyle: {
+          backgroundColor: 'rgba(255, 255, 255, 0.40)',
+          borderTopWidth: 0,
+           
+          // elevation: 0, // for Android shadow removal
+          // bottom:10,
+          position: 'absolute', // to allow content to go behind the tab bar
           headerShown: false,
-          tabBarBackground: () => <TabBarBackground />,
-          textShadowColor: 'rgba(0, 0, 0, 0.75)',
-          tabBarActiveTintColor: 'rgba(0, 0, 0, 0.75)',
-          tabBarActiveBackgroundColor:'white',
+         },
+          // tabBarBackground: () => <TabBarBackground />,
           
+          textShadowColor: 'rgba(0, 0, 0, 0.75)',
+         tabBarActiveTintColor: '#2196f3', 
+        // tabBarInactiveTintColor: 'gray',
           tabBarInactiveTintColor: '#000',
           tabBarIcon: ({ color, size }) => {
             let iconName;
@@ -249,7 +260,7 @@ useEffect(()=>{
         <Tab.Screen name="Home" component={Index} />
         <Tab.Screen name="Search" component={Search} />
         {!userdata?.FirstName?<Tab.Screen name="Signup" component={SignUp} />:null}
-        <Tab.Screen name="Playlist" component={AddPlaylist} />
+        {userdata?.FirstName?<Tab.Screen name="Playlist" component={AddPlaylist} />:null}
        { userdata?.FirstName?<Tab.Screen name="Profile" component={Profile} />:null}
        
       </Tab.Navigator>}

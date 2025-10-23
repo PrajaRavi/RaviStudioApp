@@ -19,12 +19,7 @@
        "intentFilters": [
         {
           "action": "VIEW",
-          "data": [
-            {
-              "scheme": "musicapp",
-              "host": "notification.click"
-            }
-          ],
+          "data": [{ "scheme": "ravistudio" }],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ],

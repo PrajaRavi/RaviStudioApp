@@ -184,6 +184,8 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { AppContext } from "./Store";
+import { ImageBackground } from "expo-image";
+import { hp } from "./helper";
 let   IP='192.168.1.155'
 ;
 
@@ -214,7 +216,7 @@ export default function LanguageSelect() {
   { id: 23, name: "Sanskrit", code: "sa", icon: <FontAwesome5 name="om" size={20} color="#ff9800" /> },
 ];
 
-const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,userdata,setuserdata,ActiveReveiwPage,setShowMP}=useContext(AppContext)
+const {IsLogin,setisLogin,IsSelectedLang,setIsSeletedLang,BackgroundImage}=useContext(AppContext)
   
 const navigation=useNavigation();
 const {t,i18n}=useTranslation()
@@ -249,7 +251,7 @@ const {t,i18n}=useTranslation()
   return (
     
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <LinearGradient
+     {BackgroundImage==""? <LinearGradient
             // colors={['white', '#1D8DA3']}
                 colors={['white', '#3fa9f5','white','#3fa9f5']}
       
@@ -342,7 +344,91 @@ const {t,i18n}=useTranslation()
           Submit
         </Text>
       </TouchableOpacity>
-      </LinearGradient>
+      </LinearGradient>:<ImageBackground source={{uri:BackgroundImage}} style={{flex:1}}>
+         <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          padding: 15,
+        }}
+      >
+        <TouchableOpacity style={{position:'absolute',top:40,right:30,zIndex:50}} onPress={() => {
+            // alert("helo")
+            navigation.goBack();
+        
+
+        }}>
+          <Ionicons name="close" size={28} color="#000" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Title */}
+      <Text
+        style={{
+          fontSize: 22,
+          fontWeight: "bold",
+          textAlign: "center",
+          // marginBottom: 10,
+          marginTop:10
+        }}
+      >
+        Select Your Language
+      </Text>
+
+      {/* Language List */}
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+        {languages.map((lang, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleSelect(lang.code)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 12,
+              marginBottom: 8,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: selected === lang.code ? "#00bcd4" : "#ccc",
+              backgroundColor: selected === lang.code ? "#e0f7fa" : "#fff",
+            }}
+          >
+            {/* Icon */}
+            <View style={{ marginRight: 12 }}>{lang.icon}</View>
+
+            {/* Language Name */}
+            <Text style={{ fontSize: 16, flex: 1 }}>{lang.name}</Text>
+
+            {/* Selection Indicator */}
+            <Ionicons
+              name={
+                selected === lang.name ? "radio-button-on" : "radio-button-off"
+              }
+              size={22}
+              color={selected === lang.name ? "#3fa9f5" : "gray"}
+            />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Submit Button */}
+      <TouchableOpacity
+        onPress={()=>{
+          HandleOK();
+          // alert("hello")
+        }}
+        style={{
+          backgroundColor: "#3fa9f5",
+          margin: 20,
+          padding: 15,
+          borderRadius: 12,
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold",cursor:'pointer' }}>
+          Submit
+        </Text>
+      </TouchableOpacity>
+        </ImageBackground>}
     </View>
   );
 }

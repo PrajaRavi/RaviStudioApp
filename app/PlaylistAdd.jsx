@@ -9,6 +9,7 @@ import { Dimensions, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { AppContext } from './Store';
 import { ImageBackground } from 'expo-image';
+import { wp } from './helper';
 const {width,height}=Dimensions.get('window');
 let   IP='192.168.1.155'
 ;;
@@ -124,11 +125,11 @@ GetUserData()
        
     <Text className='font-bold ' style={{fontSize:50,marginBottom:10,textAlign:'center',color:globalcolor}}>{t('addyourplaylist')}</Text>
     <TextInput placeholder={t('playlistname')} placeholderTextColor={globalcolor}   onChangeText={(text)=>setname(text)} value={name}    
-          style={{fontWeight:'bold',fontSize:15,color:globalcolor,borderRadius:23,borderColor:globalcolor,width:width*0.8,borderWidth:2,paddingHorizontal:20}}/>
-    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:globalcolor,borderWidth:2,width:width*0.8,borderRadius:23,paddingHorizontal:5}}  className="font-bold text-xl flex flex-row items-center justify-center gap-4 rounded-md border-2 my-3 border-white w-[80%]">
+          style={{fontWeight:'bold',fontSize:15,color:globalcolor,borderRadius:13,borderColor:globalcolor,width:wp(80),borderWidth:2,paddingHorizontal:20}}/>
+    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:'black',borderWidth:2,width:wp(80),borderRadius:13}} >
       
 
-      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:10}}>{t('choosefile')}</Text>
+      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:5}}>{t('choosefile')}</Text>
       <AntDesign name="upload" size={24} color={globalcolor} />
     
     </TouchableOpacity>
@@ -144,10 +145,10 @@ GetUserData()
     <Text className='font-bold ' style={{fontSize:50,marginBottom:10,textAlign:'center',color:globalcolor}}>{t('addyourplaylist')}</Text>
     <TextInput placeholder={t('playlistname')} placeholderTextColor={globalcolor}   onChangeText={(text)=>setname(text)} value={name}    
           style={{fontWeight:'bold',fontSize:15,color:globalcolor,borderRadius:23,borderColor:globalcolor,width:width*0.8,borderWidth:2,paddingHorizontal:20}}/>
-    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:globalcolor,borderWidth:2,width:width*0.8,borderRadius:23,paddingHorizontal:5}}  className="font-bold text-xl flex flex-row items-center justify-center gap-4 rounded-md border-2 my-3 border-white w-[80%]">
+    <TouchableOpacity placeholder="Select Cover Image"   onPress={pickImage} style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:30,borderColor:'black',borderWidth:2,width:wp(80),borderRadius:13}} >
       
 
-      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:10}}>{t('choosefile')}</Text>
+      <Text  style={{color:globalcolor,fontSize:20,paddingVertical:5}}>{t('choosefile')}</Text>
       <AntDesign name="upload" size={24} color={globalcolor} />
     
     </TouchableOpacity>

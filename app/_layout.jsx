@@ -1,11 +1,12 @@
 
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 // import Index from './index'
 import axios from 'axios';
 import MusicPlayer from './MusicPlayer';
 import { AppContext } from './Store';
 import { isUserOnline } from './utils/Internate';
+import * as Linking from "expo-linking"
 import TrackPlayer, {useProgress} from "react-native-track-player"
 let email;
 let   IP='192.168.1.155'
@@ -16,7 +17,12 @@ import * as SecureStore from 'expo-secure-store';
 import { useTranslation } from 'react-i18next';
 import ReviewPage from './ReviewPage';
 import WantToStopMusic from './WantToStopMusic';
-
+import MyLinking from "./utils/linking."
+import PlaybackService from "./service"
+import { AppState } from 'react-native';
+// import {useCurrentTrack} from "./hooks/usecurrentrack"
+TrackPlayer.registerPlaybackService(() => PlaybackService);
+// TrackPlayer.registerPlaybackService(() => useCurrentTrack);
 
 // import { StatusBar } from 'react-native-web';
 export default function _layout() {
@@ -54,7 +60,8 @@ let [IsCurr,setIsCurr]=useState()
   let [UserPlaylistData,setuserplaylistdata]=useState([])
   let [ShowMP,setShowMP]=useState(true)
   let [trigger,settrigger]=useState(true)
-  
+    const router = useRouter();
+
  async function IsUserOnline(){
   let data=await isUserOnline();
   // alert(data)
@@ -70,6 +77,14 @@ let [IsCurr,setIsCurr]=useState()
     
   
     
+  }
+  async function GetLastPlaySong(){
+    let data=await SecureStore.getItemAsync("SongData");
+    console.log(data);
+    // alert(JSON.parse(data).cover+'cover')
+    setpara(JSON.parse(data).name)
+    setImageUrl({uri:JSON.parse(data).cover})
+    setArtist(JSON.parse(data).artist)
   }
   async function CollectUserPlaylistData(){
    
@@ -123,12 +138,30 @@ useEffect(()=>{
 
   },[trigger])
   useEffect(()=>{
+     const handleDeepLink = ({ url }) => {
+      const { path } = Linking.parse(url);
+      // alert(url)
+      if (url == 'trackplayer://notification.click') {
+        router.push('/(tabs)');
+      }
+    };
+
+    // Listen for app already running
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    // Handle app cold start (app killed → opened via link)
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
     let newarr=Bhojsongdata.map((item)=>{
-         return item.songname
+      return item.songname
     })
-     setsongurl([...songurl,...newarr])
+    setsongurl([...songurl,...newarr])
+    return () => subscription.remove();
   },[Bhojsongdata])
   useEffect(()=>{
+    GetLastPlaySong();
     CollectUserPlaylistData()
 
 setTimeout(()=>{
@@ -182,11 +215,10 @@ CheackIfTokenExistOrNot()
     <AppContext.Provider value={{ImageUrl,setImageUrl,IsPlay,setIsPlay,para,setpara,sound,setsound,Artist,setArtist,Bhojsongdata,setBhojsongdata,IsLogin,setisLogin,IsCurr,setIsCurr,IsSelectedLang,setIsSeletedLang,userdata,setuserdata,setWantToStopMusic,UserPlaylistData,setuserplaylistdata,ActiveReveiwPage,ShowMP,setShowMP,oneloop,setoneloop,IconSize,setIconSize,BackgroundImage,setBackgroundImage,songurl,setsongurl,trigger,settrigger}} >
       {ActiveReveiwPage?<ReviewPage  ActiveReveiwPage={ActiveReveiwPage} setActiveReviewPage={setActiveReviewPage}/>:null}
    {ActiveWantToStopMusic?<WantToStopMusic setWantToStopMusic={setWantToStopMusic} ActiveWantToStopMusic={ActiveWantToStopMusic} sound={sound} setIsPlay={setIsPlay}/>:null}
-   {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second}   currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
   
   
    
-      <Stack>
+      <Stack  >
 
    <Stack.Screen name='index' options={{headerShown:false}} />
    <Stack.Screen name='FogotEmail' options={{headerShown:false}} />
@@ -214,6 +246,7 @@ CheackIfTokenExistOrNot()
    <Stack.Screen name='ShowSongUserPlaylist' options={{headerShown:false}} />
    
    </Stack>
+   {(userdata?.FirstName||internate==false) ?<MusicPlayer   positioninmilli={positioninmilli} durationinmilli={durationinmilli} HandleSlider={HandleSlider} HandleProgress={HandleProgress} songurl={songurl} Minute={Minute} Second={Second}   currMinute={currMinute} currSec={currSec} setsongurl={setsongurl} userdata={userdata} UserPlaylistData={UserPlaylistData} ShowMP={ShowMP}/>:null}
 
 
    

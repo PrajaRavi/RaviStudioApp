@@ -428,6 +428,7 @@ import axios from "axios";
 import logo from "../assets/ravi4.png"
 import * as SecureStore from "expo-secure-store";
 import { useContext, useEffect, useState } from "react";
+import { getAudioDuration } from "./utils/GetAudioDuration";
 import {
     FlatList,
     Image,
@@ -447,6 +448,8 @@ import { LinearGradient } from "expo-linear-gradient";
 // import { Toast } from "react-native-alert-notification";
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import TrackPlayer from "react-native-track-player";
+import { number } from "yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ShowSong() {
   const {downloadSong}=useDownloadManager()
@@ -456,7 +459,7 @@ export default function ShowSong() {
  let [inputvalue,setinputvalue]=useState('')
 const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,IsCurr,setIsCurr,IsLogin,userdata,BackgroundImage,setBackgroundImage,settrigger}=useContext(AppContext)
  let [searchsongdata,setsearchsongdata]=useState([])
-
+let [newarr,setnewarr]=useState([]);
     async function CollectBhojSongData() {
   let playlistname=data[0].name.replace(' Song','')
     
@@ -545,37 +548,26 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
   // }
   async function playSound(name,cover,idx,artist){
 
-    // playSong(idx,`http://${IP}:4500/${name}`,name,artist,`http://${IP}:4500/${cover}`)
+    // let data= AsyncStorage.setItem("globalvar",JSON.stringify({setIsPlay,setIsCurr}))
+    SetUpPlayer();
+    console.log(data)
+    await TrackPlayer.reset();
+    await TrackPlayer.add(newarr)
+    setTimeout(async ()=>{
+      await TrackPlayer.skip(Number(idx))
+      await TrackPlayer.play();
+    },500)
+    setpara(name)
+    setArtist(artist)
+    setImageUrl({uri:`http://${IP}:4500/${cover}`})
+    setIsPlay(true)
+    setIsCurr(name)
+    // setupPlayer();
     // await TrackPlayer.reset();
     
-    // await TrackPlayer.add([{
-    //   id:String(idx),
-    //   url:`http://${IP}:4500/${name}`,
-    //   title:name,
-    //   artist:artist,
-    //   artwork:`http://${IP}:4500/${cover}`,
-    // }])
-    // await TrackPlayer.play();
-    playSong(String(idx),`http://${IP}:4500/${name}`,name,artist,`http://${IP}:4500/${cover}`)
-    setIsCurr(name)
-        setArtist(artist)
-        let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-            setpara(name)
-        setImageUrl({uri: `http://${IP}:4500/${cover}`})
-          setIsPlay(true)
-//         let newarr=Bhojsongdata.map((item,index)=>{
-//   return ( {
-//     id:String(index+1),
-//     url:`http://${IP}:4500/${item.songname}`,
-//     title:item.songname,
-//     artist:item.artist,
-//     artwork:`http://${IP}:4500/${item.cover?item.cover:item.covername}`
-//   })
-// })
-//       await TrackPlayer.reset();
-//       await TrackPlayer.add(newarr)
-
-}
+    // console.log(await TrackPlayer.getQueue())
+  
+    }
   
 
   
@@ -586,12 +578,13 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
     setinputvalue(name)
     let SearchSongsArray=Bhojsongdata.filter((item)=>{
       return item.songname.includes(name)
+
     })
     // console.log(SearchSongsArray)
     setsearchsongdata(SearchSongsArray)
   }
   const renderSong = ({index, item }) => (
-    <TouchableOpacity  style={{width:wp(90),marginHorizontal:'auto'}} key={index} id={String(index)} onPress={()=>{
+    <TouchableOpacity  style={{width:wp(90),marginHorizontal:'auto'}} key={item.songname} id={String(index)} onPress={()=>{
     playSound(item.songname,item.covername,index,item.artist)
   }} className={IsCurr!=item.songname?"border-2 border-transparent w-[100%] my-1    rounded-md  items-center justify-between flex-row":"border-2 border-[#000] w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
   <Image className="border-2 border-black rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.covername}`}}>
@@ -622,10 +615,28 @@ const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsou
  </TouchableOpacity>
  
   );
-
+  async function SetUpPlayer(){
+    let newarr1=Bhojsongdata.map((item,index)=>{
+      return ( {
+        id:String(index),
+        url:`http://${IP}:4500/${item.songname}`,
+        title:item.songname,
+        artist:item.artist,
+        artwork:`http://${IP}:4500/${item.cover?item.cover:item.covername}`,
+        duration:getAudioDuration(`http://${IP}:4500/${item.songname}`)
+        
+      })
+    })
+      // setupPlayer();
+      setnewarr(newarr1)
+      await TrackPlayer.reset();
+      await TrackPlayer.add(newarr)
+      
+    }
   useEffect(()=>{
 // alert(data)
 // setupPlayer()
+// SetUpPlayer();
 CollectBhojSongData()
   },[])
   return (

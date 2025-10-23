@@ -12,8 +12,6 @@ let   IP='192.168.1.155'
 
 import { registerRootComponent } from 'expo'
 import TrackPlayer from 'react-native-track-player';
-import PlaybackService from "./service"
-TrackPlayer.registerPlaybackService(() => PlaybackService);
 
 
 import { useTranslation } from 'react-i18next'
@@ -80,7 +78,6 @@ export default function index() {
 
     
     useEffect(()=>{
-      
       // alert('helllo')
 
       func1();

@@ -13,8 +13,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import deleteicon from "../assets/delete.png";
 import play from "../assets/play-button.png";
 import { AppContext } from './Store';
+import TrackPlayer from 'react-native-track-player';
 const {width,height}=Dimensions.get('window')
 let   IP='192.168.1.155'
+let newarr;
+let firstrender=false;
 ;
 export default function FavraitSong() {
   const navigaion=useNavigation()
@@ -39,9 +42,7 @@ export default function FavraitSong() {
         console.log(Data.data)
         // setLikedSongData(Data.data);
         setBhojsongdata(Data.data)
-     
-        
-      } else {
+        } else {
     
         console.log("Data not found");
       }
@@ -53,97 +54,44 @@ export default function FavraitSong() {
 
   }
   async function playSound(name,cover,idx,artist) {
-    // alert(IsCurr+'iscurr')
-    setIsCurr(name)
-     setArtist(artist)
-     let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-     try {
-       
-       await Audio.setAudioModeAsync({
-         staysActiveInBackground:true,
-         shouldDuckAndroid:true,
-         playThroughEarpieceAndroid:false,
-       })
-     } catch (error) {
-       console.log(error)
-     }
-     setpara(name)
-     setImageUrl({uri: `http://${IP}:4500/${cover}`})
-     try {
-     if(sound){
-       // alert("run")
-          await sound.pauseAsync()
-          await sound.unloadAsync()
-       const { sound:newSound } = await Audio.Sound.createAsync({
-         uri:`http://${IP}:4500/${name}`
-       },
-       {
-         shouldPlay:true
-       },
- 
- 
-       (status)=>{
-         // 
-         
-         // count=1
-           
-       });
-       setsound(newSound)
-      //  
-       // await Audio.setAudioModeAsync()
-       setIsPlay(true)
-       
-       
-       // setSound(sound);
-       // sound.setStatusAsync=true
+    //  console.log(data)
+      if(firstrender==true){
+
+          newarr=Bhojsongdata?.map((item,index)=>{
+            return {
+              id:String(index),
+              url:`http://${IP}:4500/${item.songname}`,
+              artist:item.artist,
+              artwork:`http://${IP}:4500/${item.cover}`,
+              title:item.songname
+            }
+          })
+          await TrackPlayer.reset()
+          await TrackPlayer.add(newarr)
+        }
       
-    
-       console.log('Playing Sound');
-      //  
- 
-       // console.log(status.isPlaying+'isplaying')
-     }
-     else{
-       // alert('else case')
-       const { sound } = await Audio.Sound.createAsync({
-         uri:`http://${IP}:4500/${name}`
-       },
-       {
-         shouldPlay:true
-       },
-       (status)=>{
-         // 
-         
-        //  
-         // count=1
-           
-       });
-       setsound(sound)
-       // setSound(sound);
-       // sound.setStatusAsync=true
-       
-  
-       console.log('Playing Sound');
-       setIsPlay(true)
-       // 
-       // console.log(status.positionMillis)
-       let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-     }
-     } catch (error) {
-       console.log(error)    
-       
-     }
+        setTimeout(async ()=>{
+          await TrackPlayer.skip(Number(idx))
+          await TrackPlayer.play();
+        },500)
+        setpara(name)
+        setArtist(artist)
+        setImageUrl({uri:`http://${IP}:4500/${cover}`})
+        setIsPlay(true)
+        setIsCurr(name)
    }
    async function HandleFavraitSongDelete(name){
-    let newarr=LikedSongData.filter((item)=>{
-      return item.name!=name
+    let newarr=Bhojsongdata.filter((item)=>{
+      return item.songname!=name
     })
+    
     try {
-      let result =  SecureStore.getItem('Token');
-      let {data}=await axios.post(`http://${IP}:4500/GetUserDataForApp`,{Token:result})
-      let Data=await axios.post(`http://${IP}:4500/SetFavSongData/${data._id}`,{
+      let data=await SecureStore.getItemAsync("user")
+
+      let Data=await axios.post(`http://${IP}:4500/SetFavSongData/${JSON.parse(data)._id}`,{
         FavSongData:newarr
       })
+      setBhojsongdata(newarr)
       Toast.show({
               type: ALERT_TYPE.SUCCESS,
               title: 'Success',
@@ -151,8 +99,7 @@ export default function FavraitSong() {
               textBody:'Song Deleted',
         
             })
-      setLikedSongData(newarr)
-      CollectLikedSongData()
+            // CollectLikedSongData()
 
     } catch (error) {
       console.log(error)
@@ -160,6 +107,7 @@ export default function FavraitSong() {
     console.log(newarr)
    }
   useEffect(()=>{
+    firstrender=true;
 CollectLikedSongData()
   },[])
   return (
@@ -191,21 +139,23 @@ CollectLikedSongData()
       
       
       <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
-        playSound(item.name,item.cover,index,item.artist)
-      }} className={IsCurr==item.name?"border-2 border-black w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
+        playSound(item.songname,item.cover,index,item.artist)
+      }} className={IsCurr==item.songname?"border-2 border-black w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
       <Image className="border-2 border-black rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
 
       </Image>
-    <Text className=' '    style={{width:width*0.5,color:globalcolor}}>{String(item.name).length>40?(String(item.name).slice(0,40)+'...'):item.name}</Text>
-    {/* <Text>{item.IsSelected}</Text> */}
+      <View>
+
+    <Text className=' '    style={{width:width*0.5,color:globalcolor}}>{String(item.songname).length>40?(String(item.songname).slice(0,40)+'...'):item.songname}</Text>
+    <Text style={{fontSize:12}}>{item.artist}</Text>
+      </View>
     {/* <TouchableOpacity  onPress={()=>{
       HandleFavrait(item.name,item.cover,index,item.artist,item.IsSelected)
       
     }}>{item.IsSelected==true?<AntDesign  name="heart" size={20} color="red"  />:<AntDesign  name="hearto" size={20} color="black"  />}</TouchableOpacity> */}
       <Text onPress={async ()=>{
-        // playSound(item.name)
-        // pauseSound()
-        await sound.pauseAsync()
+      
+        playSound(item.songname,item.cover,index,item.artist)
         
       }}><Image source={play} style={{width:30,height:30}}/></Text>
      
@@ -240,21 +190,20 @@ CollectLikedSongData()
       
       
       <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
-        playSound(item.name,item.cover,index,item.artist)
-      }} className={IsCurr==item.name?"border-2 border-black w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
+        playSound(item.songname,item.cover,index,item.artist)
+      }} className={IsCurr==item.songname?"border-2 border-black w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-transparent w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
       <Image className="border-2 border-black rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
 
       </Image>
-    <Text className=' '    style={{width:width*0.5,color:globalcolor}}>{String(item.name).length>40?(String(item.name).slice(0,40)+'...'):item.name}</Text>
+    <Text className=' '    style={{width:width*0.5,color:globalcolor}}>{String(item.songname).length>40?(String(item.songname).slice(0,40)+'...'):item.songname}</Text>
     {/* <Text>{item.IsSelected}</Text> */}
     {/* <TouchableOpacity  onPress={()=>{
       HandleFavrait(item.name,item.cover,index,item.artist,item.IsSelected)
       
     }}>{item.IsSelected==true?<AntDesign  name="heart" size={20} color="red"  />:<AntDesign  name="hearto" size={20} color="black"  />}</TouchableOpacity> */}
       <Text onPress={async ()=>{
-        // playSound(item.name)
-        // pauseSound()
-        await sound.pauseAsync()
+        playSound(item.songname,item.cover,index,item.artist)
+       
         
       }}><Image source={play} style={{width:30,height:30}}/></Text>
      
