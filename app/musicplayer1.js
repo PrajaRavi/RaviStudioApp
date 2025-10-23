@@ -4,8 +4,6 @@ import TrackPlayer, {
   State,
   usePlaybackState,
 } from 'react-native-track-player';
-import Marker from 'react-native-image-marker';
-import { Platform } from 'react-native';
 
 let isPlayerInitialized = false;
 
@@ -40,7 +38,7 @@ export async function setupPlayer() {
         Capability.SeekTo,
       ],
       // Use your own small white PNG icon for Android notification
-      icon: require('../assets/images/icon.png'),
+     
     });
 
     isPlayerInitialized = true;
@@ -51,63 +49,8 @@ export async function setupPlayer() {
 }
 
 // 🎵 Play a specific song with overlayed logo
-export async function playSong(idx, url, songname, artist, cover, logo) {
-  try {
-    if (!isPlayerInitialized) await setupPlayer();
-
-    let artwork = cover;
-
-    // 🧩 Overlay logo on cover before using it
-    if (logo) {
-      try {
-        console.log('🖼️ Adding logo overlay...');
-        const resultPath = await Marker.markImage({
-          src: cover,            // main image (song cover)
-          markerSrc: logo,       // logo image
-          X: 30,                 // x position
-          Y: 30,                 // y position
-          markerScale: 0.3,      // scale of logo
-          quality: 100,
-          saveFormat: 'jpg',
-        });
-
-        artwork = Platform.OS === 'android' ? `file://${resultPath}` : resultPath;
-        console.log('✅ Overlay applied:', artwork);
-      } catch (err) {
-        console.warn('⚠️ Failed to overlay logo, using original cover:', err);
-      }
-    }
-
-    await TrackPlayer.reset();
-
-    const track = {
-      id: String(idx),
-      url,
-      title: songname,
-      artist,
-      artwork, // <-- shows in notification too
-    };
-
-    await TrackPlayer.add([track]);
-    await TrackPlayer.play();
-    console.log(`▶️ Now playing: ${songname}`);
-  } catch (error) {
-    console.error('❌ Error playing song:', error);
-  }
-}
 
 // ⏯️ Play / Pause toggle
-export async function togglePlayPause() {
-  const state = await TrackPlayer.getState();
-
-  if (state === State.Playing) {
-    await TrackPlayer.pause();
-    console.log('⏸️ Paused');
-  } else {
-    await TrackPlayer.play();
-    console.log('▶️ Resumed');
-  }
-}
 
 // ⏭️ Next track
 export async function playNext() {

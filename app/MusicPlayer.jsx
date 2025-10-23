@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Alert, Animated, DeviceEventEmitter, Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 import crossicon from "../assets/cancel.png"
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-
+import { VolumeManager } from 'react-native-volume-manager';
 import loopicon from "../assets/exchange.png"
 import nextbtnicon from "../assets/next.png"
 import pauseicon from "../assets/pause.png"
@@ -22,6 +22,7 @@ import { RotatingImage } from './utils/RotateImage'
 import {usePlayPauseSignal} from './hooks/useSongPlayPaus'
 // import {useCurrentTrack} from "./hooks/usecurrentrack"
 let newarr=[];
+let newTranscript;
 // import TrackPlayer from 'react-native-track-player';
 
 let {width,height}=Dimensions.get('window')
@@ -76,6 +77,8 @@ const {position,duration}=TrackTime();
   const [finalTranscript, setFinalTranscript] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  let [volumeflag,setvolumeflag]=useState(1)
+  // let [Transcript,setTranscript]=useState("")
   const playback=usePlaybackState();
 
   // --- Event Listeners/Hooks ---
@@ -93,14 +96,15 @@ const {position,duration}=TrackTime();
   // This event fires continuously as the user speaks.
   useSpeechRecognitionEvent('result', async (event) => {
     
-    const newTranscript = event.results[0]?.transcript || '';
+    newTranscript = event.results[0]?.transcript || '';
+    setTranscript(newTranscript.trim().toLowerCase())
     
     // setTranscript(newTranscript);
     console.log(newTranscript)
-    if(newTranscript.includes("echo")||newTranscript.includes("ego")||newTranscript.includes("eko")||newTranscript.includes("Echo")||newTranscript.includes("Eco")||newTranscript.includes("Eeco")){
-      if(sound){
+    if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")){
+      if(TrackPlayer){
 
-        await sound.setVolumeAsync(0.2);
+        await TrackPlayer.setVolume(0.2)
       } 
       else{
         Speech.speak("first play any song")
@@ -109,112 +113,156 @@ const {position,duration}=TrackTime();
       }
       
       
-      if(newTranscript.includes("whoareyou")||newTranscript.includes("who are you")||newTranscript.includes("about yourself")||newTranscript.includes("aboutyourself")||newTranscript.includes("who r u")||newTranscript.includes("who r you")||newTranscript.includes("who r u")||newTranscript.includes("who r u")){
-        await sound.setVolumeAsync(1);
-        Speech.speak("I am your voice assistant")
+      if(newTranscript.toLowerCase().includes("whoareyou")||newTranscript.toLowerCase().includes("who are you")||newTranscript.toLowerCase().includes("about yourself")||newTranscript.toLowerCase().includes("aboutyourself")||newTranscript.toLowerCase().includes("who r u")||newTranscript.toLowerCase().includes("who r you")||newTranscript.toLowerCase().includes("who r u")||newTranscript.toLowerCase().includes("who r u")){
+        await TrackPlayer.pause()
+        await VolumeManager.setVolume(1);
+        // await TrackPlayer.setVolume(0.2)
+        setTimeout(async ()=>{
+          await VolumeManager.setVolume(0.5);
+          await TrackPlayer.play()
+        // await TrackPlayer.setVolume(1)
+
+
+          },2000)
         
+        Speech.speak("I am your voice assistant")
       
       }
-     else if(newTranscript.includes("play in loop")){
+     else if(newTranscript.toLowerCase().includes("set volume")||newTranscript.toLowerCase().includes("Set volume")){
+  if(newTranscript.toLowerCase().includes("25")||newTranscript.toLowerCase().includes("twenty five")){
+    await VolumeManager.setVolume(0.25)
+    setvolumeflag(0.25)
+  }        
+     
+  else if(newTranscript.toLowerCase().includes("50")||newTranscript.toLowerCase().includes("fifty")||newTranscript.toLowerCase().includes("be")){
+    await VolumeManager.setVolume(0.50)
+    setvolumeflag(0.50)
+
+  }        
+  else if(newTranscript.toLowerCase().includes("seventy five")||newTranscript.toLowerCase().includes("75")){
+    await VolumeManager.setVolume(0.75)
+    setvolumeflag(0.75)
+
+  }        
+  else if(newTranscript.toLowerCase().includes("100")||newTranscript.toLowerCase().includes("hundred")||newTranscript.toLowerCase().includes("full")){
+    await VolumeManager.setVolume(1)
+    setvolumeflag(1)
+
+  }        
+      
+      }
+    
+     else if(newTranscript.toLowerCase().includes("play in loop")){
       HandleLoop(Data.para);
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("play")||newTranscript.includes("start")||newTranscript.includes("start")||newTranscript.includes("clap")||newTranscript.includes("plague")||newTranscript.includes("plate")||newTranscript.includes("place")){
+     else if(newTranscript.toLowerCase().includes("listen")||newTranscript.toLowerCase().includes("here")){
+          await VolumeManager.setVolume(1);
+        setTimeout(async ()=>{
+          await VolumeManager.setVolume(0.5);
+
+          },2000)
+        
+        Speech.speak("yes absolutely, i can hear you")
+      
+      }
+     else if(newTranscript.toLowerCase().includes("play")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("clap")||newTranscript.toLowerCase().includes("plague")||newTranscript.toLowerCase().includes("plate")||newTranscript.toLowerCase().includes("place")){
         setIsPlay(true)
-        await sound.playAsync();
+        await TrackPlayer.play();
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("show MP")||newTranscript.includes("show mp")||newTranscript.includes("open mp")||newTranscript.includes("so mp")||newTranscript.includes("so MP")||newTranscript.includes("open MP")){
+     else if(newTranscript.toLowerCase().includes("show MP")||newTranscript.toLowerCase().includes("show mp")||newTranscript.toLowerCase().includes("open mp")||newTranscript.toLowerCase().includes("so mp")||newTranscript.toLowerCase().includes("so MP")||newTranscript.toLowerCase().includes("open MP")){
       HandleSongMP();
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("close MP")||newTranscript.includes("close mp")){
+     else if(newTranscript.toLowerCase().includes("close MP")||newTranscript.toLowerCase().includes("close mp")){
       HandleCross();
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("open download section")||newTranscript.includes("open downloads")||newTranscript.includes("downloads")||newTranscript.includes("download") ||newTranscript.includes("open download")){
+     else if(newTranscript.toLowerCase().includes("open download section")||newTranscript.toLowerCase().includes("open downloads")||newTranscript.toLowerCase().includes("downloads")||newTranscript.toLowerCase().includes("download") ||newTranscript.toLowerCase().includes("open download")){
       // navigation.navigate('DownloadSong')
       router.push('/DownloadSong')
       
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("open home section")||newTranscript.includes("open home")||newTranscript.includes("home")||newTranscript.includes("home") ||newTranscript.includes("open home")){
+     else if(newTranscript.toLowerCase().includes("open home section")||newTranscript.toLowerCase().includes("open home")||newTranscript.toLowerCase().includes("home")||newTranscript.toLowerCase().includes("home") ||newTranscript.toLowerCase().includes("open home")){
       // navigation.navigate('DownloadSong')
       router.push('/(tabs)')
       
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("open favourite section")||newTranscript.includes("open favourite")||newTranscript.includes("favourite")||newTranscript.includes("favourite") ||newTranscript.includes("open favourite")){
+     else if(newTranscript.toLowerCase().includes("open favourite section")||newTranscript.toLowerCase().includes("open favourite")||newTranscript.toLowerCase().includes("favourite")||newTranscript.toLowerCase().includes("favourite") ||newTranscript.toLowerCase().includes("open favourite")){
       // navigation.navigate('DownloadSong')
       router.push('/FavraitSong')
       
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-     else if(newTranscript.includes("open setting section")||newTranscript.includes("open settings section")||newTranscript.includes("open setting")||newTranscript.includes("open settings")||newTranscript.includes("setting")||newTranscript.includes("setting") ||newTranscript.includes("settings")){
+     else if(newTranscript.toLowerCase().includes("open setting section")||newTranscript.toLowerCase().includes("open settings section")||newTranscript.toLowerCase().includes("open setting")||newTranscript.toLowerCase().includes("open settings")||newTranscript.toLowerCase().includes("setting")||newTranscript.toLowerCase().includes("setting") ||newTranscript.toLowerCase().includes("settings")){
       // navigation.navigate('DownloadSong')
       router.push('/setting')
       
           setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
         
       
       }
-      else if(newTranscript.includes("pause")||newTranscript.includes("pose")||newTranscript.includes("stop")||newTranscript.includes("cause")||newTranscript.includes("paws")||newTranscript.includes("paz")||newTranscript.includes("EcoSport")){
+      else if(newTranscript.toLowerCase().includes("pause")||newTranscript.toLowerCase().includes("pose")||newTranscript.toLowerCase().includes("ecos")||newTranscript.toLowerCase().includes("stop")||newTranscript.toLowerCase().includes("stock")||newTranscript.toLowerCase().includes("cause")||newTranscript.toLowerCase().includes("paws")||newTranscript.toLowerCase().includes("paz")||newTranscript.toLowerCase().includes("EcoSport")){
   setIsPlay(false)
-        await sound.pauseAsync();
+        await TrackPlayer.pause();
       
          setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
 
         },2000)
      
       }
-      else if(newTranscript.includes("next")||newTranscript.includes("forward")||newTranscript.includes("forward")||newTranscript.includes("echonext")||newTranscript.includes("econext")||newTranscript.includes("Econext")){
+      else if(newTranscript.toLowerCase().includes("next")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("echonext")||newTranscript.toLowerCase().includes("econext")||newTranscript.toLowerCase().includes("Econext")){
         Handlenext()
          setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
         },2000)
      
       }
-      else if(newTranscript.includes("previous")||newTranscript.includes("back")||newTranscript.includes("echoprevious")||newTranscript.includes("ecoprevious")||newTranscript.includes("Ecoprevious")||newTranscript.includes("Ecoback") ||newTranscript.includes("echo back")||newTranscript.includes("ecoback")||newTranscript.includes("eco bag")||newTranscript.includes("echoback")){
-        HandlePrev()
-         setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+      else if(newTranscript.toLowerCase().includes("previous")||newTranscript.toLowerCase().includes("back")||newTranscript.toLowerCase().includes("echoprevious")||newTranscript.toLowerCase().includes("ecoprevious")||newTranscript.toLowerCase().includes("Ecoprevious")||newTranscript.toLowerCase().includes("Ecoback") ||newTranscript.toLowerCase().includes("echo back")||newTranscript.toLowerCase().includes("ecoback")||newTranscript.toLowerCase().includes("eco bag")||newTranscript.toLowerCase().includes("echoback")){
+        setTimeout(async ()=>{
+          await TrackPlayer.setVolume(volumeflag);
         },2000)
+        HandlePrev()
      
     }
     else{
          setTimeout(async ()=>{
-await sound.setVolumeAsync(1);
+await TrackPlayer.setVolume(volumeflag);
+setTranscript("")
         },2000)
     }   
   
@@ -412,6 +460,8 @@ async function Handlenext(){
   console.log(await TrackPlayer.getQueue())
   console.log("this is queue")
   // alert(parseInt(JSON.parse(Data1).idx)+1)
+  setIsPlay(true)
+
 
   // await TrackPlayer.skip(parseInt(JSON.parse(Data1).idx)+1);
   await TrackPlayer.skipToNext();
@@ -425,7 +475,7 @@ async function Handlenext(){
       setpara(data.title)
       setImageUrl({uri:data.artwork})
       setArtist(data.artist)
-let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.title,cover:data.artwork,idx:(JSON.parse(Data1).idx)+1,artist:data.artist,TotalSong:Bhojsongdata.length}))
+let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.title,cover:data.artwork,idx:Number(data.idx)+1,artist:data.artist,TotalSong:Bhojsongdata.length}))
 
   // console.log(data)
   
@@ -476,6 +526,7 @@ async function HandlePrev(){
    let Data1=await SecureStore.getItemAsync('SongData')
   console.log(await TrackPlayer.getQueue())
   console.log("this is queue")
+  setIsPlay(true)
   // alert(parseInt(JSON.parse(Data1).idx)+1)
 
   // await TrackPlayer.skip(parseInt(JSON.parse(Data1).idx)+1);
@@ -490,7 +541,7 @@ async function HandlePrev(){
       setpara(data.title)
       setImageUrl({uri:data.artwork})
       setArtist(data.artist)
-let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.title,cover:data.artwork,idx:(JSON.parse(Data1).idx)+1,artist:data.artist,TotalSong:Bhojsongdata.length}))
+let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.title,cover:data.artwork,idx:Number(data.idx)+1,artist:data.artist,TotalSong:Bhojsongdata.length}))
 
   }
 
@@ -501,7 +552,7 @@ let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name:data.tit
  function HandleSongMP(){
    
 
-  // handleStartRecording()
+  handleStartRecording()
   // startListening()
 setIsActive(true)
  }
@@ -777,9 +828,11 @@ setOptions(false)
     <View >
 
      <View style={DeviceDetect()=='Mobile'?{position:'absolute',bottom:50,zIndex:30}: {position:'absolute',bottom:80,zIndex:30}}  >
+      <Text style={{textAlign:'center',backgroundColor:'black',color:'white'}}>{transcript==""?"speak something":transcript}</Text>
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}
+
 <TouchableOpacity onPress={()=>{
   HandlePlay()
 }}>{Data.IsPlay?<Image source={pauseicon} style={{width:40,height:40}}/>:<Image source={playicon} style={{width:40,height:40}}/>}</TouchableOpacity>
