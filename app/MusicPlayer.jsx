@@ -1,11 +1,11 @@
 
-import { AntDesign, FontAwesome6 } from '@expo/vector-icons'
+import { AntDesign, Feather, FontAwesome6, MaterialIcons } from '@expo/vector-icons'
 import Slider from '@react-native-community/slider'
 import { Audio } from 'expo-av'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, Animated, DeviceEventEmitter, Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Animated, DeviceEventEmitter, Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import crossicon from "../assets/cancel.png"
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { VolumeManager } from 'react-native-volume-manager';
@@ -67,6 +67,7 @@ const {t,i18n}=useTranslation()
     let Inputvalue=useRef()
   let [selectedplaylsit,setselectedplaylist]=useState()
   const rotuer=useRouter();
+  let [SQ,setSQ]=useState(false)//SQ->song quality
   // let [userplaylistSongs,setuserplaylistsongs]=useState([])
   // let [spokentext,setspokentext]=useState('')
   // const {currentTrack,playbackState}=useCurrentTrack()
@@ -80,7 +81,48 @@ const {position,duration}=TrackTime();
   let [volumeflag,setvolumeflag]=useState(1)
   let [nextflag,setnextflag]=useState(false)
   let [backflag,setbackflag]=useState(false)
-  
+  const [selectedId, setSelectedId] = useState('2'); // 'High' as default
+  const QUALITY_OPTIONS = [
+  { id: '1', quality: 'Normal', bitrate: '96 kbps', icon: 'speaker' },
+  { id: '2', quality: 'High', bitrate: '160 kbps', icon: 'graphic-eq' },
+  { id: '3', quality: 'Very High', bitrate: '320 kbps', icon: 'equalizer' },
+  { id: '4', quality: 'Lossless (FLAC)', bitrate: '1411 kbps', icon: 'fiber-smart-record' },
+];
+const renderItem = ({ item }) => {
+    const isSelected = item.id === selectedId;
+
+    return (
+      <Pressable 
+        style={styles.itemContainer} 
+        onPress={() => setSelectedId(item.id)}
+      >
+        <MaterialIcons 
+          name={item.icon} 
+          size={24} 
+          color={isSelected ? '#3fa9f5' : 'white'} // Spotify green for selected
+          style={styles.icon}
+        />
+        
+        <View style={styles.textGroup}>
+          <Text style={[styles.qualityText, isSelected && styles.selectedText]}>
+            {item.quality}
+          </Text>
+          <Text style={styles.bitrateText}>
+            {item.bitrate}
+          </Text>
+        </View>
+
+        {/* --- Selection Indicator (Checkmark) --- */}
+        {isSelected && (
+          <MaterialIcons 
+            name="check-circle" 
+            size={24} 
+            color="#3fa9f5" 
+          />
+        )}
+      </Pressable>
+    );
+  };
   // let [Transcript,setTranscript]=useState("")
   const playback=usePlaybackState();
 
@@ -938,12 +980,33 @@ setOptions(false)
 
 <TouchableOpacity onPress={()=>{
   HandleThreeDotOption()
+  setSQ(false)
 }}><Image source={threedotoption} style={{width:30,height:30}}/></TouchableOpacity>
-{AddToPlaylist?<TouchableOpacity onPress={()=>{
-  HandleOptions()
-}} style={{position:'absolute',top:20,right:25,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:3,borderWidth:2,borderColor:'white',paddingHorizontal:10,paddingVertical:5,borderRadius:12}}>
-<AntDesign name="plus" size={20} color="white" /><Text className='text-white'>Add to Playlist</Text>
-</TouchableOpacity>:null}
+{AddToPlaylist?<View style={{position:'absolute',top:20,right:25,backgroundColor:'#1F2A38',padding:15,borderRadius:10,width:wp(50),zIndex:50,gap:10}}>
+  <TouchableOpacity onPress={()=>{
+    HandleOptions()
+  }} style={{display:'flex',flexDirection:'row',justifyContent:'space-around',gap:10}}>
+    <AntDesign name="plus" size={20} color="white" /><Text className='text-white'>Add to Playlist</Text>
+  </TouchableOpacity>
+  <TouchableOpacity onPress={()=>{
+  setSQ(true)
+  }} style={{display:'flex',flexDirection:'row',justifyContent:'space-around',gap:10}}>
+    <Feather name="music" size={24} color="white" /><Text className='text-white'>Song quality</Text>
+  </TouchableOpacity>
+  
+  </View>:null
+  
+}
+{SQ?<View style={styles.listWrapper}>
+      <Text style={styles.header}>Select Streaming Quality</Text>
+      <FlatList
+        data={QUALITY_OPTIONS}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        // No numColumns needed here since it's a single list
+      />
+    </View>:null
+}
 {Options?<View className='flex items-center justify-center bg-black gap-4  z-50 absolute left-[50px] rounded-md'>
 
 <FlatList style={{height:200}}  data={UserPlaylistData} renderItem={({item})=>{
@@ -1039,3 +1102,49 @@ return <TouchableOpacity onPress={()=>{
     
   )
 }
+const styles = StyleSheet.create({
+  listWrapper: {
+    flex: 1,
+    backgroundColor: '#1F2A38',
+    padding: 20,
+    color:'white',
+    borderRadius:23,
+    position:'absolute',
+    top:10,
+    zIndex:50,
+    right:30,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: 'white',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#eee',
+  },
+  icon: {
+    marginRight: 15,
+  },
+  textGroup: {
+    flex: 1, // Ensures the text group takes up available space
+    justifyContent: 'center',
+  },
+  qualityText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'white',
+  },
+  bitrateText: {
+    fontSize: 14,
+    color: 'white',
+  },
+  selectedText: {
+    color: '#3fa9f5', // Change text color when selected
+    fontWeight: 'bold',
+  }
+});
