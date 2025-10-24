@@ -311,7 +311,7 @@ const pickImage = async () => {
     }
   };
  async function HandleSignOut(){
-    setisLogin(false)
+    // setisLogin(false)
     i18n.changeLanguage('en')
    setTimeout(()=>{
 
@@ -336,7 +336,7 @@ TrackPlayer.pause();
     // alert("Profile")
     getuserdatafromLS()
     setuserdp(userdata.Profile)
-  })
+  },[])
   return (
     <AlertNotificationRoot>
   {BackgroundImage==""?<LinearGradient

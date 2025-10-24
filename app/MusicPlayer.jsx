@@ -35,7 +35,7 @@ import * as Speech from 'expo-speech'
 import { useContext } from 'react'
 import { hp, wp } from './helper'
 // import {} from "./musicplayer1"
-import {CircularRainbowVisualizer} from './MusicVisualizer'
+// import {CircularMusicVisualizer} from './MusicVisualizer'
 import { AppContext } from './Store'
 // all imports of TTS
 import {
@@ -105,7 +105,7 @@ const {position,duration}=TrackTime();
     setTranscript(newTranscript);
     console.log(newTranscript)
     // console.log(finalTranscript+'final')
-    if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")){
+    if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")||newTranscript.toLowerCase().includes("bico")){
       if(TrackPlayer){
 
         await TrackPlayer.setVolume(0.2)
@@ -163,8 +163,9 @@ const {position,duration}=TrackTime();
       // handleStartRecording()
       }
     
-     else if(newTranscript.toLowerCase().includes("play in loop")){
-      handleStopRecording()
+     else if(newTranscript.toLowerCase().includes("loop")||newTranscript.toLowerCase().includes("loom")){
+     
+       handleStopRecording()
       HandleLoop(Data.para);
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
@@ -196,17 +197,7 @@ handleStartRecording()
         
       
     //   }
-     else if(newTranscript.toLowerCase().includes("play")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("clap")||newTranscript.toLowerCase().includes("plague")||newTranscript.toLowerCase().includes("plate")||newTranscript.toLowerCase().includes("place")){
-      handleStopRecording()
-        setIsPlay(true)
-        await TrackPlayer.play();
-          setTimeout(async ()=>{
-await TrackPlayer.setVolume(volumeflag);
-handleStartRecording()
-        },2000)
-        
-      
-      }
+   
      else if(newTranscript.toLowerCase().includes("show MP")||newTranscript.toLowerCase().includes("show mp")||newTranscript.toLowerCase().includes("open mp")||newTranscript.toLowerCase().includes("so mp")||newTranscript.toLowerCase().includes("so MP")||newTranscript.toLowerCase().includes("open MP")){
       handleStopRecording()
       HandleSongMP();
@@ -283,7 +274,7 @@ handleStartRecording()
         
       
       }
-      else if(newTranscript.toLowerCase().includes("pause")||newTranscript.toLowerCase().includes("pose")||newTranscript.toLowerCase().includes("ecos")||newTranscript.toLowerCase().includes("stop")||newTranscript.toLowerCase().includes("stock")||newTranscript.toLowerCase().includes("cause")||newTranscript.toLowerCase().includes("paws")||newTranscript.toLowerCase().includes("paz")||newTranscript.toLowerCase().includes("EcoSport")){
+      else if(newTranscript.toLowerCase().includes("pause")||newTranscript.toLowerCase().includes("pose")||newTranscript.toLowerCase().includes("ecos")||newTranscript.toLowerCase().includes("stop")||newTranscript.toLowerCase().includes("stock")||newTranscript.toLowerCase().includes("cause")||newTranscript.toLowerCase().includes("paws")||newTranscript.toLowerCase().includes("paz")||newTranscript.toLowerCase().includes("eco top")||newTranscript.toLowerCase().includes("eco shop")){
      
   setIsPlay(false)
         await TrackPlayer.pause();
@@ -298,6 +289,8 @@ await TrackPlayer.setVolume(volumeflag);
       }
       else if(newTranscript.toLowerCase().includes("next")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("echonext")||newTranscript.toLowerCase().includes("econext")||newTranscript.toLowerCase().includes("Econext")){
         // console.log("chala")
+await TrackPlayer.setVolume(0.3);
+
         handleStopRecording();
         if(nextflag==false){
 
@@ -328,6 +321,17 @@ handleStartRecording();
         },2000)
      
     }
+      else if(newTranscript.toLowerCase().includes("play")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("clap")||newTranscript.toLowerCase().includes("plague")||newTranscript.toLowerCase().includes("plate")||newTranscript.toLowerCase().includes("place")){
+      handleStopRecording()
+        setIsPlay(true)
+        await TrackPlayer.play();
+          setTimeout(async ()=>{
+await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+        },2000)
+        
+      
+      }
     else{
       
 
@@ -353,6 +357,7 @@ await TrackPlayer.setVolume(volumeflag);
     setIsRecognizing(false);
     setIsLoading(false);
     console.error('Speech Recognition Error:', event.error);
+    handleStartRecording();
     // Alert.alert("Error", `Recognition failed: ${event.error?.message}`);
   });
 
@@ -405,7 +410,7 @@ setImageUrl({uri:data.artwork})
       const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (result.granted) {
         setIsPermissionGranted(true);
-        // handleStartRecording()
+       
       } else {
         Alert.alert("Permission Required", "Microphone and speech recognition permissions are needed.");
         // handleStartRecording();
@@ -670,8 +675,7 @@ setIsActive(true)
   }
   if(loop==true && oneloop==false){
     setoneloop(false)
-    // loop
-    // alert('all')
+    alert("Nothing playing in loop")
     await TrackPlayer.setRepeatMode(RepeatMode.Off);
 
     setloop(false)
@@ -963,7 +967,7 @@ return <TouchableOpacity onPress={()=>{
 </View>
 <View style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
 
-{showadd==false?<CircularRainbowVisualizer soundObject={sound} image={ImageUrl} size={200} innerImageSize={190} />:
+{showadd==false?<Image  source={ImageUrl} style={{width:200,height:200,borderRadius:100}}  />:
 <View>
   <Text style={{color:"white",fontSize:40,borderWidth:3,borderColor:'red',width:wp(90),height:hp(40)}}>show ads</Text>
   </View>}
@@ -972,6 +976,7 @@ return <TouchableOpacity onPress={()=>{
 
 <Text className='text-white'>{Data.Artist!=undefined?Data.Artist.length>40?((Data.Artist).slice(0,40)+'...'):Data.Artist:null}</Text>
 <Text className='text-white'>{Data.para!=undefined?Data.para.length>40?((Data.para).slice(0,40)+'...'):Data.para:null}</Text>
+  <Text style={transcript==""?{textAlign:'center',backgroundColor:'black',color:'white',width:wp(90),marginHorizontal:'auto',borderRadius:10,position:'relative',top:30}:{textAlign:'center',backgroundColor:'#000',color:'#3fa9f5',width:wp(90),marginHorizontal:'auto',borderRadius:10,position:'relative',top:30}}>{transcript==""?"speak something":transcript}</Text>
 </View>
 <View>
 <TouchableOpacity onPress={()=>{
