@@ -78,6 +78,9 @@ const {position,duration}=TrackTime();
   const [isLoading, setIsLoading] = useState(false);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
   let [volumeflag,setvolumeflag]=useState(1)
+  let [nextflag,setnextflag]=useState(false)
+  let [backflag,setbackflag]=useState(false)
+  
   // let [Transcript,setTranscript]=useState("")
   const playback=usePlaybackState();
 
@@ -99,8 +102,9 @@ const {position,duration}=TrackTime();
     newTranscript = event.results[0]?.transcript || '';
     setTranscript(newTranscript.trim().toLowerCase())
     
-    // setTranscript(newTranscript);
+    setTranscript(newTranscript);
     console.log(newTranscript)
+    // console.log(finalTranscript+'final')
     if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")){
       if(TrackPlayer){
 
@@ -113,22 +117,29 @@ const {position,duration}=TrackTime();
       }
       
       
-      if(newTranscript.toLowerCase().includes("whoareyou")||newTranscript.toLowerCase().includes("who are you")||newTranscript.toLowerCase().includes("about yourself")||newTranscript.toLowerCase().includes("aboutyourself")||newTranscript.toLowerCase().includes("who r u")||newTranscript.toLowerCase().includes("who r you")||newTranscript.toLowerCase().includes("who r u")||newTranscript.toLowerCase().includes("who r u")){
+      if(newTranscript.toLowerCase().includes("whoareyou")||newTranscript.toLowerCase().includes("who are you")||newTranscript.toLowerCase().includes("about yourself")||newTranscript.toLowerCase().includes("aboutyourself")||newTranscript.toLowerCase().includes("hu r u")||newTranscript.toLowerCase().includes("who r you")||newTranscript.toLowerCase().includes("who r u")||newTranscript.toLowerCase().includes("who r u")){
         await TrackPlayer.pause()
         await VolumeManager.setVolume(1);
+        handleStopRecording()
         // await TrackPlayer.setVolume(0.2)
+        Speech.speak("I am your voice assistant")
         setTimeout(async ()=>{
           await VolumeManager.setVolume(0.5);
+          
           await TrackPlayer.play()
+          setIsPlay(true)
+          setTranscript("")
+          handleStartRecording()
+         
         // await TrackPlayer.setVolume(1)
 
 
           },2000)
         
-        Speech.speak("I am your voice assistant")
       
       }
      else if(newTranscript.toLowerCase().includes("set volume")||newTranscript.toLowerCase().includes("Set volume")){
+      // handleStopRecording()
   if(newTranscript.toLowerCase().includes("25")||newTranscript.toLowerCase().includes("twenty five")){
     await VolumeManager.setVolume(0.25)
     setvolumeflag(0.25)
@@ -149,120 +160,182 @@ const {position,duration}=TrackTime();
     setvolumeflag(1)
 
   }        
-      
+      // handleStartRecording()
       }
     
      else if(newTranscript.toLowerCase().includes("play in loop")){
+      handleStopRecording()
       HandleLoop(Data.para);
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
         },2000)
         
       
       }
-     else if(newTranscript.toLowerCase().includes("listen")||newTranscript.toLowerCase().includes("here")){
-          await VolumeManager.setVolume(1);
-        setTimeout(async ()=>{
-          await VolumeManager.setVolume(0.5);
-
-          },2000)
+     else if(newTranscript.toLowerCase().includes("add this song in favourite")||newTranscript.toLowerCase().includes("at this song in favourite")){
+      // alert(para)
+      handleStopRecording()
+      HandleAddFavraitSong(para)
+          setTimeout(async ()=>{
+await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+        },2000)
         
-        Speech.speak("yes absolutely, i can hear you")
       
       }
+    //  else if(newTranscript.toLowerCase().includes("listen")||newTranscript.toLowerCase().includes("hear")){
+    //       await VolumeManager.setVolume(1);
+    //       await TrackPlayer.pause()
+    //       Speech.speak("yes, absolutely, i can hear you")
+    //     setTimeout(async ()=>{
+    //       await VolumeManager.setVolume(volumeflag);
+    //       await TrackPlayer.play()
+
+    //       },2000)
+        
+      
+    //   }
      else if(newTranscript.toLowerCase().includes("play")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("start")||newTranscript.toLowerCase().includes("clap")||newTranscript.toLowerCase().includes("plague")||newTranscript.toLowerCase().includes("plate")||newTranscript.toLowerCase().includes("place")){
+      handleStopRecording()
         setIsPlay(true)
         await TrackPlayer.play();
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("show MP")||newTranscript.toLowerCase().includes("show mp")||newTranscript.toLowerCase().includes("open mp")||newTranscript.toLowerCase().includes("so mp")||newTranscript.toLowerCase().includes("so MP")||newTranscript.toLowerCase().includes("open MP")){
+      handleStopRecording()
       HandleSongMP();
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("close MP")||newTranscript.toLowerCase().includes("close mp")){
+      handleStopRecording()
       HandleCross();
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("open download section")||newTranscript.toLowerCase().includes("open downloads")||newTranscript.toLowerCase().includes("downloads")||newTranscript.toLowerCase().includes("download") ||newTranscript.toLowerCase().includes("open download")){
       // navigation.navigate('DownloadSong')
+      handleStopRecording()
+
       router.push('/DownloadSong')
       
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("open home section")||newTranscript.toLowerCase().includes("open home")||newTranscript.toLowerCase().includes("home")||newTranscript.toLowerCase().includes("home") ||newTranscript.toLowerCase().includes("open home")){
+      handleStopRecording()
+
       // navigation.navigate('DownloadSong')
       router.push('/(tabs)')
       
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("open favourite section")||newTranscript.toLowerCase().includes("open favourite")||newTranscript.toLowerCase().includes("favourite")||newTranscript.toLowerCase().includes("favourite") ||newTranscript.toLowerCase().includes("open favourite")){
       // navigation.navigate('DownloadSong')
+      handleStopRecording()
+
       router.push('/FavraitSong')
       
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+
         },2000)
         
       
       }
      else if(newTranscript.toLowerCase().includes("open setting section")||newTranscript.toLowerCase().includes("open settings section")||newTranscript.toLowerCase().includes("open setting")||newTranscript.toLowerCase().includes("open settings")||newTranscript.toLowerCase().includes("setting")||newTranscript.toLowerCase().includes("setting") ||newTranscript.toLowerCase().includes("settings")){
+      handleStopRecording()
+
       // navigation.navigate('DownloadSong')
       router.push('/setting')
       
           setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+handleStartRecording()
+
         },2000)
         
       
       }
       else if(newTranscript.toLowerCase().includes("pause")||newTranscript.toLowerCase().includes("pose")||newTranscript.toLowerCase().includes("ecos")||newTranscript.toLowerCase().includes("stop")||newTranscript.toLowerCase().includes("stock")||newTranscript.toLowerCase().includes("cause")||newTranscript.toLowerCase().includes("paws")||newTranscript.toLowerCase().includes("paz")||newTranscript.toLowerCase().includes("EcoSport")){
+     
   setIsPlay(false)
         await TrackPlayer.pause();
       
          setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+// handleStartRecording()
+
 
         },2000)
      
       }
       else if(newTranscript.toLowerCase().includes("next")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("echonext")||newTranscript.toLowerCase().includes("econext")||newTranscript.toLowerCase().includes("Econext")){
-        Handlenext()
+        // console.log("chala")
+        handleStopRecording();
+        if(nextflag==false){
+
+          Handlenext()
+        }
+        setnextflag(true)
          setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
+setnextflag(false)
+handleStartRecording();
+
         },2000)
      
       }
       else if(newTranscript.toLowerCase().includes("previous")||newTranscript.toLowerCase().includes("back")||newTranscript.toLowerCase().includes("echoprevious")||newTranscript.toLowerCase().includes("ecoprevious")||newTranscript.toLowerCase().includes("Ecoprevious")||newTranscript.toLowerCase().includes("Ecoback") ||newTranscript.toLowerCase().includes("echo back")||newTranscript.toLowerCase().includes("ecoback")||newTranscript.toLowerCase().includes("eco bag")||newTranscript.toLowerCase().includes("echoback")){
+        handleStopRecording();
+
+        if(backflag==false){
+
+          HandlePrev()
+        }
+        setbackflag(true)
         setTimeout(async ()=>{
           await TrackPlayer.setVolume(volumeflag);
+          setbackflag(false)
+handleStartRecording();
+
         },2000)
-        HandlePrev()
      
     }
     else{
+      
+
          setTimeout(async ()=>{
 await TrackPlayer.setVolume(volumeflag);
-setTranscript("")
+// setTranscript("")
+// handleStartRecording();
+
         },2000)
     }   
   
@@ -271,6 +344,7 @@ setTranscript("")
     if (event.isFinal) {
       // Append the final result to the main history/final result state
       setFinalTranscript(prev => prev + newTranscript + ' '); 
+      
       setTranscript(''); // Clear the current interim text
     }
     });
@@ -279,7 +353,7 @@ setTranscript("")
     setIsRecognizing(false);
     setIsLoading(false);
     console.error('Speech Recognition Error:', event.error);
-    Alert.alert("Error", `Recognition failed: ${event.error?.message}`);
+    // Alert.alert("Error", `Recognition failed: ${event.error?.message}`);
   });
 
   // setting up the data for next/previous function*ality in react-native-track-player
@@ -828,7 +902,7 @@ setOptions(false)
     <View >
 
      <View style={DeviceDetect()=='Mobile'?{position:'absolute',bottom:50,zIndex:30}: {position:'absolute',bottom:80,zIndex:30}}  >
-      <Text style={{textAlign:'center',backgroundColor:'black',color:'white'}}>{transcript==""?"speak something":transcript}</Text>
+      <Text style={transcript==""?{textAlign:'center',backgroundColor:'black',color:'white',borderWidth:3,borderColor:'transparent',width:wp(90),marginHorizontal:'auto',borderRadius:10}:{textAlign:'center',backgroundColor:'#000',color:'#3fa9f5',borderWidth:3,borderColor:'#3fa9f5',width:wp(90),marginHorizontal:'auto',borderRadius:10}}>{transcript==""?"speak something":transcript}</Text>
      
 <View style={{paddingHorizontal:14,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:wp(100),backgroundColor:'black',paddingVertical:6,borderRadius:23,}}  className=' flex  items-center  justify-between w-[90%] py-1 bg-black rounded-md   border-2 flex-row'>
 {/* <AntDesign name="pause-circle" className='border-2 text- border-white rounded-full' size={40} color="white" /> */}

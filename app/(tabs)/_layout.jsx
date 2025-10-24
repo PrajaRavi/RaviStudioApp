@@ -141,7 +141,7 @@ export default function App() {
   async function getuserdatafromLS(){
     let data=await SecureStore.getItemAsync('user')
     setuserdata(JSON.parse(data))
-    alert(JSON.parse(data).FirstName)
+    // alert(JSON.parse(data).FirstName)
   }
     async function GetUserData(){
   

@@ -82,6 +82,7 @@ let [IsCurr,setIsCurr]=useState()
     let data=await SecureStore.getItemAsync("SongData");
     console.log(data);
     // alert(JSON.parse(data).cover+'cover')
+    // alert(JSON.parse(data).name)
     setpara(JSON.parse(data).name)
     setImageUrl({uri:JSON.parse(data).cover})
     setArtist(JSON.parse(data).artist)
