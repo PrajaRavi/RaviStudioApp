@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { hp } from "../helper";
 import RiverBackground from '../theme/RiverTheme';
 import { isUserOnline } from "../utils/Internate";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 let firstrender=true
 let   IP='192.168.1.155'
 
@@ -278,19 +279,21 @@ const speak = () => {
     setsingerdata(data)
     
   }
+  
   async function RefreshToken(){
-        let data1=await SecureStore.getItemAsync('user')
-              if(!data1){
-                return
-              }
-               email=JSON.parse(data1).email
+    let data1=await AsyncStorage.getItem("useremail")
+    // alert(data1)
+                   if(!data1){
+                    return
+                }
+               email=data1
           
  if(email){
 axios.defaults.withCredentials=true;
    let {data}=await axios.get(`http://${IP}:4500/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
-  console.log("chala")
-  //  setisLogin(true)
-  //  setuserdata(data)
+ 
+   await SecureStore.setItemAsync('user',JSON.stringify(data))
+ 
              }
 
   }
@@ -395,22 +398,24 @@ let data=await SecureStore.deleteItemAsync('Token');
     setTimeout(()=>{
       i18n.changeLanguage("hi")
       // alert("hello")
-      return (()=>clearInterval(myinterval))
-})
-
-GenrateTokenOnComingOnHomePage();
-  
-      activate()
-      GetUserData()
-      GetSingerData()
-      GetPlaylistData()
-      let Intarval=setInterval(()=>{
-        RefreshToken()
-        // GenrateTokenOnComingOnHomePage
-        // alert('refresh')
-      },2000)
+    })
+    
+    GenrateTokenOnComingOnHomePage();
+    
+    let Intarval=setInterval(()=>{
+      RefreshToken()
+      // GenrateTokenOnComingOnHomePage
+      // alert('refresh')
+    },2000)
+    activate()
+    GetUserData()
+    GetSingerData()
+    GetPlaylistData()
+    // return (()=>)
       
-      return ()=>{clearInterval(Intarval)}
+      return ()=>{clearInterval(Intarval)
+        clearInterval(myinterval)
+      }
     
   },[])
   
@@ -540,7 +545,7 @@ setIsSeletedLang(code)
              <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
 
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
-              {UserPlaylistData.map((playlist,index) => (
+              {UserPlaylistData?.map((playlist,index) => (
                 <TouchableOpacity onPress={()=>{
                   alert(playlist.playlistname)
                   HandleUserSongPageShift(playlist.playlistname)

@@ -141,30 +141,31 @@ export default function App() {
   async function getuserdatafromLS(){
     let data=await SecureStore.getItemAsync('user')
     setuserdata(JSON.parse(data))
+    // alert(JSON.parse(data).FirstName+"firstname")
     // alert(JSON.parse(data).FirstName)
   }
-    async function GetUserData(){
+//     async function GetUserData(){
   
-        try {
-          let data1=await SecureStore.getItemAsync('user')
-          if(!data1){
-            return
-          }
-           email=JSON.parse(data1).email
-          // alert(email)
+//         try {
+//           let data1=await SecureStore.getItemAsync('user')
+//           if(!data1){
+//             return
+//           }
+//            email=JSON.parse(data1).email
+//           // alert(email)
 
         
-          let {data}=await axios.get(`http://${IP}:4500/GetUserData/${email}`)
-         setuserdata(data)
-        //  alert(data.FirstName+"firstname")
-        } catch (error) {
-          console.log(error)
-        }
-// // alert('getuserdata end');
-}
+//           let {data}=await axios.get(`http://${IP}:4500/GetUserData/${email}`)
+//          setuserdata(data)
+//         //  alert(data.FirstName+"firstname")
+//         } catch (error) {
+//           console.log(error)
+//         }
+// // // alert('getuserdata end');
+// }
 useEffect(()=>{
   getuserdatafromLS()
-  GetUserData();
+  // GetUserData();
   },[])
   return (
     <>

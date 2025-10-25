@@ -254,6 +254,7 @@ import { hp, wp } from "../helper";
 import { AppContext } from "../Store";
 import { ImageBackground } from 'expo-image';
 import TrackPlayer from 'react-native-track-player';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 let IP='192.168.1.155'
 ;;
 
@@ -327,6 +328,7 @@ const pickImage = async () => {
           setuserdata([])
           
      let data=await SecureStore.deleteItemAsync('user')
+     await AsyncStorage.removeItem("useremail")
      navigation.navigate("Home")
      TrackPlayer.reset();
 TrackPlayer.pause(); 

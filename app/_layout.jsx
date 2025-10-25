@@ -20,6 +20,7 @@ import WantToStopMusic from './WantToStopMusic';
 import MyLinking from "./utils/linking."
 import PlaybackService from "./service"
 import { AppState } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {useCurrentTrack} from "./hooks/usecurrentrack"
 TrackPlayer.registerPlaybackService(() => PlaybackService);
 // TrackPlayer.registerPlaybackService(() => useCurrentTrack);
@@ -206,9 +207,15 @@ IsUserOnline();
   useEffect(()=>{
 
 CheackIfTokenExistOrNot()
-    GetUserData()
+    // GetUserData()
+    getuseremailfromLS();
 
   },[IsLogin])
+   async function getuseremailfromLS(){
+     let data=await SecureStore.getItemAsync("user");
+     setuserdata(JSON.parse(data))
+   }
+  
   return (
     <>
 {/* <StatusBar hidden={true} /> */}

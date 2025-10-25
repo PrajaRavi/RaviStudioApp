@@ -147,7 +147,7 @@ const renderItem = ({ item }) => {
     setTranscript(newTranscript);
     console.log(newTranscript)
     // console.log(finalTranscript+'final')
-    if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")||newTranscript.toLowerCase().includes("bico")||newTranscript.toLowerCase().includes("pico")||newTranscript.toLowerCase().includes("piko")){
+    if(newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("ego")||newTranscript.toLowerCase().includes("eko")||newTranscript.toLowerCase().includes("echo")||newTranscript.toLowerCase().includes("eaco")||newTranscript.toLowerCase().includes("eco")||newTranscript.toLowerCase().includes("bico")||newTranscript.toLowerCase().includes("e4")){
       if(TrackPlayer){
 
         await TrackPlayer.setVolume(0.2)
@@ -329,7 +329,7 @@ await TrackPlayer.setVolume(volumeflag);
         },2000)
      
       }
-      else if(newTranscript.toLowerCase().includes("next")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("net")||newTranscript.toLowerCase().includes("echonext")||newTranscript.toLowerCase().includes("econext")||newTranscript.toLowerCase().includes("Econext")){
+      else if(newTranscript.toLowerCase().includes("next")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("forward")||newTranscript.toLowerCase().includes("echonext")||newTranscript.toLowerCase().includes("econext")||newTranscript.toLowerCase().includes("Econext")){
         // console.log("chala")
 await TrackPlayer.setVolume(0.3);
 

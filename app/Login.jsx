@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { ALERT_TYPE, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import * as yup from "yup";
 import { AppContext } from './Store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login() {
 
  let [globalcolor,setglobalcolor]=useState('white');
@@ -70,6 +71,7 @@ const {IsLogin,setisLogin,setuserdata}=useContext(AppContext)
         })
         save("user",JSON.stringify(data.user))
         setuserdata(JSON.stringify(data.user))
+       await AsyncStorage.setItem("useremail",(data.user).email)
         
         setTimeout(()=>{
           navigation.navigate('index')
