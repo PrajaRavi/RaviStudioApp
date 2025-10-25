@@ -288,7 +288,7 @@ const speak = () => {
  if(email){
 axios.defaults.withCredentials=true;
    let {data}=await axios.get(`http://${IP}:4500/refresh/${email}`,{withCredentials:true}).catch(err=>console.log(err.message))
-  
+  console.log("chala")
   //  setisLogin(true)
   //  setuserdata(data)
              }
@@ -536,14 +536,14 @@ setIsSeletedLang(code)
               ))}
             </ScrollView>
           </View>
-           {UserPlaylistData.length>0?<View style={[styles.section,{}]}>
+           {UserPlaylistData?.length>0?<View style={[styles.section,{}]}>
              <Text style={styles.sectionTitle}>{t('myplaylist')}</Text>
 
              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScrollView}>
               {UserPlaylistData.map((playlist,index) => (
                 <TouchableOpacity onPress={()=>{
-                  alert(playlist.name)
-                  HandleSongPageShift(playlist.name)
+                  alert(playlist.playlistname)
+                  HandleUserSongPageShift(playlist.playlistname)
                 }} key={index} style={styles.playlistItem}>
                   {/* <Image source={{ uri: `http://${IP}:4500/${playlist.playlistimage}` }} style={styles.playlistImage} /> */}
                 <DropImage key={index} size={Iconsize1}  src={`http://${IP}:4500/${playlist.playlistimage}`}/>

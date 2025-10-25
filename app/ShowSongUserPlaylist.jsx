@@ -1,7 +1,7 @@
 
 import { useRoute } from '@react-navigation/native'
 import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Animated, FlatList, Image, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Animated, FlatList, Image, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 
 import { Stack, useNavigation } from 'expo-router'
@@ -18,11 +18,15 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useContext } from 'react'
 import { Dimensions } from 'react-native'
 import { AppContext } from './Store'
+import { LinearGradient } from 'expo-linear-gradient'
+import { wp,hp } from './helper'
+import TrackPlayer from 'react-native-track-player'
+import { getAudioDuration } from './utils/GetAudioDuration'
 let {width,height}=Dimensions.get('window')
 
 
 export default function ShowSongUserPlaylist() {
-  const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,IsCurr,setIsCurr,userdata,userplaylistSongs,IsLogin,setuserplaylistsongs,UserPlaylistData,setuserplaylistdata}=useContext(AppContext)
+  const {ImageUrl,setImageUrl,IsPlay,setArtist,setIsPlay,para,setpara,sound,setsound,setstatus,status,Bhojsongdata,setBhojsongdata,IsCurr,setIsCurr,userdata,userplaylistSongs,IsLogin,setuserplaylistsongs,UserPlaylistData,setuserplaylistdata,BackgroundImage}=useContext(AppContext)
   // console.log(Data)
   const spinvalue=useRef(new Animated.Value(0)).current;  
 const navigation=useNavigation()
@@ -41,7 +45,7 @@ let ravi={name:'Rai'}
 //  let [userdata,setuserdata]=useState([])
   const {params:data}=useRoute();
   console.log(data)
-  count=1
+  
  
 
  
@@ -62,169 +66,39 @@ let ravi={name:'Rai'}
   // console.log(name)
   setinputvalue(name)
   let SearchSongsArray=Bhojsongdata.filter((item)=>{
-    return item.name.includes(name)
+    return item?.name.includes(name)
   })
   // console.log(SearchSongsArray)
   setsearchsongdata(SearchSongsArray)
 }
   async function playSound(name,cover,idx,artist) {
+    let newarr=Bhojsongdata.map((item,index)=>{
+      return {
+        id:String(index),
+        url:`http://${IP}:4500/${item.name}`,
+        artwork:`http://${IP}:4500/${item.cover}`,
+        duration:getAudioDuration(`http://${IP}:4500/${item.name}`),
+        title:item.name,
+        artist:item.artist,
+      }
+    })
+setIsPlay(true)
     setIsCurr(name)
-   
-
     setArtist(artist)
-    let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-    try {
-      
-      await Audio.setAudioModeAsync({
-        staysActiveInBackground:true,
-        shouldDuckAndroid:true,
-        playThroughEarpieceAndroid:false,
-      })
-    } catch (error) {
-      console.log(error)
-    }
-    try {
-    setpara(name)
-    setImageUrl({uri: `http://${IP}:4500/${cover}`})
-    
-    // {<-----------------COMPLETE PLAY PAUSE LOGIC----------------------------------->}
-    // console.log(soundRef)
-    
-    // if(status==undefined){
-      
-    //   console.log('Loading Sound');
-    
-    //   const { sound } = await Audio.Sound.createAsync({
-      //     uri:`http://${IP}:4500/${name}`
-      //   },
-      //   {
-      //     shouldPlay:true
-      //   },
-      //   (status)=>{
-        //     // 
-      //     
-      //     // count=1
-      
-      //   });
-      //   setsound(sound)
-      //   // setSound(sound);
-      //   // sound.setStatusAsync=true
-      
-      //   console.log('Playing Sound');
-      //   
-      // }
-      // {<--------------complete playpause logic-------------------------------->}
-      // if(status!=undefined){
-        
-      //   if(status.isPlaying==true){
-      //     await sound.pauseAsync();
-      //     alert("Song Pause")
-      //   }
-      //   else{
-        //     const { sound } = await Audio.Sound.createAsync({
-          //       uri:`http://${IP}:4500/${name}`
-          //     },
-          //     {
-            //       shouldPlay:true
-            //     },
-            //     (status)=>{
-              //       // 
-              //       
-              //       // count=1
-              
-              //     });
-              //   setsound(sound)
-              
-              //     alert("Song Play")
-              //     await sound.playAsync()
-              //   }
-              // }
-              
-              // let Data=await sound.getStatusAsync()
-              // setstatus(Data)
-              
-              // console.log(sound)
-    if(sound){
-      // alert("run")
-         await sound.pauseAsync()
-         await sound.unloadAsync()
-      const { sound:newSound } = await Audio.Sound.createAsync({
-        uri:`http://${IP}:4500/${name}`
-      },
-      {
-        shouldPlay:true,
-      
-      },
-
-
-      (status)=>{
-        // 
-        
-        // count=1
-          
-      });
-      setsound(newSound)
-      
-      // await Audio.setAudioModeAsync()
-      setIsPlay(true)
-      
-      
-      // setSound(sound);
-      // sound.setStatusAsync=true
-     
+    setImageUrl(`http://${IP}:4500/${cover}`)
+    await TrackPlayer.reset();
+    await TrackPlayer.add(newarr)
+setTimeout(async ()=>{
+await TrackPlayer.skip(Number(idx))
+await TrackPlayer.play()
+},500)
    
-      // console.log('Playing Sound');
-      // 
 
-      // console.log(status.isPlaying+'isplaying')
-    }
-    else{
-      // alert('else case')
-      const { sound } = await Audio.Sound.createAsync({
-        uri:`http://${IP}:4500/${name}`
-      },
-      {
-        shouldPlay:true
-      },
-      (status)=>{
-        // 
-        
-        
-        // count=1
-          
-      });
-      setsound(sound)
-      // setSound(sound);
-      // sound.setStatusAsync=true
-      
+
+   
+  }
+
  
-      // console.log('Playing Sound');
-      setIsPlay(true)
-      // 
-      // console.log(status.positionMillis)
-      let Data=await SecureStore.setItemAsync('SongData',JSON.stringify({name,cover,idx,artist,TotalSong:Bhojsongdata.length}))
-    }
-    } catch (error) {
-      console.log(error)    
-      
-    }
-  }
-
-  async function HandlePlay(){
-    setIsCurr(para)
-    if(IsPlay==true){
-      await sound.pauseAsync();
-      setIsPlay(false)
-      
-    }
-    else{
-      await sound.playAsync();
-      setIsPlay(true)
-
-    }
-   
-  }
-
   // alert(searchplaylistdata)
   async function CollectSongsOfUserPlaylist(){
   
@@ -242,6 +116,8 @@ console.log(Data.data)
     else{
       // setUserPlaylistSongData(Data.data)
       setBhojsongdata(Data.data)
+      console.log(Data.data)
+      console.log("user playlist")
    
 
     }
@@ -305,130 +181,184 @@ alert(t('playlistdelete'))
 
 
 }
+const renderSong = ({index, item }) => (
+    <TouchableOpacity  style={{width:wp(90),marginHorizontal:'auto'}} key={item.name} id={String(index)} onPress={()=>{
+    playSound(item.name,item.cover,index,item.artist)
+  }} className={IsCurr!=item.name?"border-2 border-transparent w-[100%] my-1    rounded-md  items-center justify-between flex-row":"border-2 border-[#000] w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
+  <Image className="border-2 border-black rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
+
+  </Image>
+<Text className=' '    style={{width:wp(50)}}>{String(item.name).length>40?(String(item.name).slice(0,40)+'...'):item.name}</Text>
+  <TouchableOpacity onPress={()=>{
+     playSound(item.name,item.cover,index,item.artist)
+  }}>
+ <AntDesign name="play-circle" size={25} color="black" />
+  </TouchableOpacity>
+
+ 
+ </TouchableOpacity>
+ 
+  );
   
   return (
     <>
    
+{BackgroundImage==""? <LinearGradient
+              // colors={['white', '#1D8DA3']}
+                colors={['white', '#3fa9f5','white','#3fa9f5']}
+      
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{flex:1}}
+            >
+               <View style={styles.overlay}>
+        <FlatList
+          data={searchsongdata.length>0?searchsongdata:Bhojsongdata}
+          renderItem={renderSong}
+          keyExtractor={(item) => item._id}
+          ListHeaderComponent={
+            <>
+              {/* Playlist Image */}
+              <View style={styles.imageContainer}>
+                     {data!=undefined?<Image  source={{uri: `http://${IP}:4500/${data[0].playlistimage}`}} style={{width:wp(94),height:hp(40),borderRadius:23}} />:null}
 
+              </View>
+
+              {/* Playlist Name */}
+               <Text style={{fontSize:wp(8),width:wp(100),fontWeight:'bold',fontFamily:'Bahnschrift',color:'black',textAlign:'center'}}>  {data!=undefined?data[0].playlistname:null}</Text>
+     <Text style={{fontSize:wp(3.5),width:wp(100),textAlign:'center',fontWeight:600,fontFamily:'Bahnschrift',color:'black'}}> {data!=undefined?data[0].title:null}</Text>
+              {/* Search Box */}
+              <View style={styles.searchContainer}>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search songs..."
+                  placeholderTextColor="#aaa"
+                  value={inputvalue}
+                  onChangeText={(text)=>{HandleSongSearch(text)}}
+                />
+              </View>
+            </>
+          }
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+     
+
+            </LinearGradient>
+:
+      <ImageBackground source={{ uri: BackgroundImage }} style={{ flex: 1 }} >
+
+      <View style={styles.overlay}>
+        <FlatList
+          data={Bhojsongdata}
+          renderItem={renderSong}
+          keyExtractor={(item) => item._id}
+          ListHeaderComponent={
+            <>
+              {/* Playlist Image */}
+              <View style={styles.imageContainer}>
+                     {data!=undefined?<Image  source={{uri: `http://${IP}:4500/${data[0].playlistimage}`}} style={{width:wp(94),height:hp(40),borderRadius:23}} />:null}
+
+              </View>
+
+              {/* Playlist Name */}
+               <Text style={{fontSize:wp(8),width:wp(100),fontWeight:'bold',fontFamily:'Bahnschrift',color:'black',textAlign:'center'}}>  {data!=undefined?data[0].title:null}</Text>
+     <Text style={{fontSize:wp(3.5),width:wp(100),textAlign:'center',fontWeight:600,fontFamily:'Bahnschrift',color:'black'}}> {data!=undefined?data[0].description:null}</Text>
+              {/* Search Box */}
+              <View style={styles.searchContainer}>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search songs..."
+                  placeholderTextColor="#aaa"
+                  value={inputvalue}
+                  onChangeText={(text)=>{HandleSongSearch(text)}}
+                />
+              </View>
+            </>
+          }
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+      </ImageBackground>
+}
    
 
  
 
 
    
-    <SafeAreaView>
-
- <AppContext.Provider value={{HandlePlay,ravi}}>
+    
     
                                                                                                                                                                                                                                         
-    <View style={{backgroundColor:'#021b04',height:height}}>
   
-    <View style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:'center',alignItems:'center',}} className=''>
-    {data!=undefined?<Image className='border-2 border-[#54ff1c] rounded-xl px-4  my-2 object-cover' source={{uri: `http://${IP}:4500/${data[0].playlistimage}`}} style={{width:'40%',height:height*0.18}} />:null}
-    <View style={{display:'flex',alignItems:'flex-start',justifyContent:'center',width:'50%',gap:10}}>
-
-    <Text style={{fontSize:width*0.05,fontWeight:'bold',fontFamily:'Bahnschrift',color:globalcolor}}>  {data!=undefined?data[0].playlistname:null}</Text>
-    <TouchableOpacity onPress={()=>{
-      HandleUserPlaylistDelete(data[0].playlistname)
-    }} style={{width:width*0.5}} className='border-2 border-white text-xl font-bold flex flex-row items-center justify-center gap-2 rounded-md px-5'> <MaterialIcons  name="delete" size={24} color={globalcolor} /><Text className='text-xl font-bold text-white'> Playlist</Text></TouchableOpacity>
-    <TextInput onChangeText={(text)=>{
-      HandleSongSearch(text)
-    }} placeholder="Search" style={{borderWidth:2,borderColor:globalcolor,width:width*0.5,fontWeight:500,borderRadius:24,paddingBottom:4,paddingTop:2,fontSize:15}}/>
-    </View>
-  
-   </View>
-     {/* songlist */}
-     {
-      activityindicator?<ActivityIndicator color={'#54ff1c'} size={50}/>: <View style={{display:'flex',width:'100%',alignItems:'center',justifyContent:'center'}}>
-
-      <View   style={{width:width*0.9,height:height*0.65,minHeight:height*0.50,}} className="flex  flex-col gap-1 ">
-  <View  style={{width:width*0.9,height:'100%',minHeight:height*0.50}} className="flex my-3 flex-col gap-1 ">
- { inputvalue==''&& IsLogin?<FlatList  data={Bhojsongdata} showsVerticalScrollIndicator={false} renderItem={({item,index})=>(
-   
-   
-   
-   <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
-     playSound(item.name,item.cover,index,item.artist)
-   }} className={IsCurr!=item.name?"border-2 border-white w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-[#54ff1c] w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
-   <Image className="border-2 border-white rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
-
-   </Image>
- <Text className=' '    style={{width:width*0.5}}>{String(item.name).length>40?(String(item.name).slice(0,40)+'...'):item.name}</Text>
  
-   <Text onPress={async ()=>{
-     // playSound(item.songname)
-     // pauseSound()
-     await sound.pauseAsync()
-     
-   }}><AntDesign name="play" size={20} color={globalcolor} /></Text>
-  <TouchableOpacity onPress={()=>{
-    HandleDelete(item.name)
-  }}>
-
-  <MaterialIcons  name="delete" size={24} color={globalcolor} />
-  </TouchableOpacity>
-  </TouchableOpacity>
-  
- )}/>:<FlatList  data={searchsongdata} showsVerticalScrollIndicator={false} renderItem={({item,index})=>(
-   
-   
-   
-  <TouchableOpacity  key={index} id={String(index)} onPress={()=>{
-    playSound(item.name,item.cover,index,item.artist)
-  }} className={IsCurr!=item.name?"border-2 border-white w-[100%] my-1   rounded-md  items-center justify-between flex-row":"border-2 border-[#54ff1c] w-[100%] my-1   rounded-md  items-center justify-between flex-row"}>
-  <Image className="border-2 border-white rounded-full w-[40px] h-[40px] mx-1 my-1 " source={{uri:`http://${IP}:4500/${item.cover}`}}>
-
-  </Image>
-<Text className=' '    style={{width:width*0.5}}>{String(item.name).length>40?(String(item.name).slice(0,40)+'...'):item.name}</Text>
-
-  <Text onPress={async ()=>{
-    // playSound(item.songname)
-    // pauseSound()
-    await sound.pauseAsync()
-    
-  }}><AntDesign name="play" size={20} color={globalcolor} /></Text>
- <TouchableOpacity onPress={()=>{
-   HandleDelete(item.name)
- }}>
-
- <MaterialIcons  name="delete" size={24} color={globalcolor} />
- </TouchableOpacity>
- </TouchableOpacity>
- 
-)}/>}
-   
-
-  </View>
-
- 
-</View>
-</View>
-     }
-     
-  
-    
- 
- 
-   
-    <Stack>
-      {/* <Stack.Screen name='ShowSong' options={{headerShown:false}} /> */}
-   
-      <Stack.Screen name='index' options={{headerShown:false}} />
-      <Stack.Screen name='FogotEmail' options={{headerShown:false}} />
-      <Stack.Screen name='ResetPas' options={{headerShown:false}} />
-      <Stack.Screen name='Login' options={{headerShown:false}} />
-      <Stack.Screen name='(tabs)/index' options={{headerShown:false}} />
-      <Stack.Screen name='(tabs)' options={{headerShown:false}} />
-      
-      </Stack>
-       
-  </View>
-  </AppContext.Provider>
-    
-    </SafeAreaView>
  
 
     </>
   )
 }
 
+const styles = StyleSheet.create({
+  
+  background: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
+  overlay: {
+    flex: 1,
+    // backgroundColor: "rgba(0,0,0,0.5)", // dark overlay on top of background
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginTop: 30,
+  },
+  playlistImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: "#fff",
+  },
+  playlistName: {
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 15,
+  },
+  searchContainer: {
+    marginTop: 20,
+    marginHorizontal: 20,
+    backgroundColor: "rgba(0,0,0,0.1)",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.2)",
+  },
+  searchInput: {
+    color: "#000",
+    placeholderTextColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+  },
+  listContent: {
+    paddingBottom: 60,
+  },
+  songItem: {
+    marginHorizontal: 20,
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  songText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+});
